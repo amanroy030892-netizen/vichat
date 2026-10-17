@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VeilChat — Face-Hidden Social Media & Personal Video Call App</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- Google Firebase SDKs (Compat v9) for 100% Free Netlify + Cloud Firestore Multi-Device Sync -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -505,6 +509,76 @@
   </div>
 
   <script>
+    // ==================== GOOGLE FIREBASE CLOUD FIRESTORE (ISOLATED vc_* COLLECTIONS) ====================
+    const vcFirebaseConfig = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86",
+      storageBucket: "safarsaathi-1de86.firebasestorage.app",
+      messagingSenderId: "560392119536",
+      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
+      measurementId: "G-0PB4K9PWVD"
+    };
+    let vcDb = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        const app = !firebase.apps.length ? firebase.initializeApp(vcFirebaseConfig) : firebase.app();
+        vcDb = firebase.firestore(app);
+        console.log('VeilChat Cloud Firestore Connected (Isolated vc_* collections)');
+      }
+    } catch (err) {
+      console.warn('Firestore fallback to local mode:', err);
+    }
+
+    function syncPostToCloud(postObj) {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_posts').doc(postObj.id).set(postObj, { merge: true });
+      } catch (e) {}
+    }
+
+    function syncReportToCloud(reportObj) {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_reports').doc(reportObj.id).set(reportObj, { merge: true });
+      } catch (e) {}
+    }
+
+    function startCloudListeners() {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_posts').limit(50).onSnapshot((snap) => {
+          snap.docChanges().forEach((change) => {
+            const data = change.doc.data();
+            if (data && data.id) {
+              const idx = state.posts.findIndex((p) => p.id === data.id);
+              if (idx === -1) {
+                state.posts.unshift(data);
+              } else {
+                state.posts[idx] = data;
+              }
+            }
+          });
+          if (state.activeTab === 'feed') renderFeed();
+        });
+
+        vcDb.collection('vc_reports').limit(50).onSnapshot((snap) => {
+          snap.docChanges().forEach((change) => {
+            const data = change.doc.data();
+            if (data && data.id) {
+              const idx = state.abuseReports.findIndex((r) => r.id === data.id);
+              if (idx === -1) {
+                state.abuseReports.unshift(data);
+              } else {
+                state.abuseReports[idx] = data;
+              }
+            }
+          });
+          if (state.activeTab === 'admin') renderAdminPanel();
+        });
+      } catch (e) {}
+    }
+
     // ==================== APPLICATION STATE ====================
     const MASK_META = {
       fox:   { emoji: '🦊', name: 'Neon Fox Mask', color: '#6366f1', accent: '#a855f7' },
@@ -1165,7 +1239,13 @@
       renderAdminPanel();
       renderFriendRequests();
       renderVideoCanvases();
+      startCloudListeners();
 
+      // Auto-set Personal Invite Link to live Netlify domain
+      const inviteInputEl = document.getElementById('myInviteLinkInput');
+      if (inviteInputEl && window.location.hostname && !window.location.hostname.includes('localhost')) {
+        inviteInputEl.value = window.location.origin + '/?invite=ShadowFox_99';
+      }
       // Copy Personal Invite Link
       document.getElementById('copyInviteLinkBtn').addEventListener('click', () => {
         const linkInput = document.getElementById('myInviteLinkInput');
@@ -1304,7 +1384,7 @@
           showToast('कृपया पोस्ट करने के लिए अपने मन की बात लिखें।', '⚠️');
           return;
         }
-        state.posts.unshift({
+        const newPostObj = {
           id: 'p_' + Date.now(),
           userId: 'me',
           handle: '@ShadowFox_99',
@@ -1315,7 +1395,9 @@
           reactions: { hug: 1, support: 1, listen: 0 },
           userReacted: {},
           comments: []
-        });
+        };
+        state.posts.unshift(newPostObj);
+        syncPostToCloud(newPostObj);
         input.value = '';
         state.moodFilter = 'ALL';
         renderFeed();
@@ -1539,7 +1621,7 @@
         const newReportId = 'REP-' + Math.floor(1000 + Math.random() * 9000);
         accused.kycUnlocked = true; // Automatically unlock KYC for Admin upon report
 
-        state.abuseReports.unshift({
+        const newRepObj = {
           id: newReportId,
           accusedId: accused.id,
           reporterHandle: '@ShadowFox_99 (You)',
@@ -1549,7 +1631,9 @@
           timestamp: 'अभी-अभी',
           status: 'pending_review',
           autoDeleteDays: 30
-        });
+        };
+        state.abuseReports.unshift(newRepObj);
+        syncReportToCloud(newRepObj);
 
         state.auditLogs.unshift({
           time: 'अभी',

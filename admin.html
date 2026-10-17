@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeilChat — Face-Hidden Social Media & Personal Video Call App</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- Google Firebase SDKs (Compat v9) for 100% Free Netlify + Cloud Firestore Multi-Device Sync -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.82);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+    }
+    .neon-border {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+    }
+    .pulse-ring {
+      animation: pulseRing 2s infinite;
+    }
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 glass-card border-b border-indigo-500/20 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c-4.97 0-9 3.582-9 8 0 2.12.93 4.045 2.45 5.477.31.292.55.69.55 1.123v1.9a1.5 1.5 0 002.25 1.3l1.79-1.033c.62-.358 1.34-.517 2.05-.452.3.028.6.085.91.085 4.97 0 9-3.582 9-8s-4.03-8-9-8z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 10h.01M15 10h.01M9.5 14.5s1 1 2.5 1 2.5-1 2.5-1" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300 bg-clip-text text-transparent">VeilChat</h1>
+            <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">100% Face-Hidden</span>
+          </div>
+          <p class="text-xs text-slate-400">बेझिझक मन की बात कहें • मास्क्ड पर्सनल वीडियो कॉल • सुरक्षित दोस्ती</p>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800" aria-label="Main Tabs">
+        <button id="tabBtnFeed" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow">
+          🎭 इमोशनल फीड (Feed)
+        </button>
+        <button id="tabBtnFriends" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+          💬 दोस्त और चैट (<span id="friendCountBadge">3</span>)
+        </button>
+        <button id="tabBtnVideo" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+          📹 पर्सनल वीडियो कॉल
+        </button>
+        <button id="tabBtnAdmin" type="button" class="nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-amber-300 hover:text-amber-200 flex items-center gap-1">
+          🛡️ एडमिन पैनल <span id="adminReportBadge" class="px-1.5 py-0.2 rounded-full text-[11px] bg-rose-500/30 text-rose-300 border border-rose-500/40">1</span>
+        </button>
+      </nav>
+
+      <!-- Current Masked User Profile Pill -->
+      <div class="hidden md:flex items-center gap-2.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
+        <div id="myHeaderMaskIcon" class="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-base">🦊</div>
+        <div class="text-xs">
+          <div class="font-semibold text-slate-200" id="myHandleDisplay">@ShadowFox_99</div>
+          <div class="text-[11px] text-emerald-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> फेस मास्क ऑन (KYC Verified)
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- ==================== VIEW 1: EMOTIONAL VENTING FEED ==================== -->
+    <section id="viewFeed" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Sidebar: My Masked Identity & Mood Filter -->
+      <aside class="lg:col-span-4 space-y-5">
+        <div class="glass-card rounded-2xl p-5 neon-border">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-indigo-300 uppercase tracking-wider">आपकी छुपी हुई पहचान</h2>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Real Face Hidden</span>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-900/80 border border-slate-800 mb-4">
+            <div id="sidebarMaskPreview" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600/40 to-purple-600/40 border border-indigo-400/40 flex items-center justify-center text-3xl">
+              🦊
+            </div>
+            <div>
+              <div class="font-bold text-base text-white">@ShadowFox_99</div>
+              <p class="text-xs text-slate-400">आपका असली चेहरा किसी यूज़र को नहीं दिखता।</p>
+            </div>
+          </div>
+
+          <label for="globalMaskSelect" class="block text-xs font-medium text-slate-300 mb-1.5">अपना डिफ़ॉल्ट 3D फेस मास्क चुनें:</label>
+          <select id="globalMaskSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+            <option value="fox">🦊 निऑन कित्सुने (Neon Fox Mask)</option>
+            <option value="owl">🦉 एस्ट्रल आउल (Astral Owl Mask)</option>
+            <option value="cyber">🤖 साइबर वाइज़र (Cyber Punk Visor)</option>
+            <option value="lotus">🪷 ज़ेन लोटस (Zen Calm Mask)</option>
+            <option value="pixel">🟪 हैवी पिक्सेल ब्लर (Deep Pixel Blur)</option>
+          </select>
+
+          <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-2 text-xs text-slate-400">
+            <div class="flex items-center justify-between">
+              <span>साइनअप सेल्फी (KYC Vault):</span>
+              <span class="text-amber-300 font-medium">🔒 Encrypted (Admin Only)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>कॉल सेफ्टी शील्ड:</span>
+              <span class="text-emerald-400 font-medium">✅ 60s Rolling Buffer On</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mood Filter Card -->
+        <div class="glass-card rounded-2xl p-5">
+          <h3 class="text-sm font-semibold text-slate-200 mb-3">मूड के अनुसार पोस्ट देखें (Mood Filter)</h3>
+          <div class="flex flex-wrap gap-2" id="moodFilterContainer">
+            <button type="button" data-mood="ALL" class="mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-600 text-white">सभी पोस्ट (All)</button>
+            <button type="button" data-mood="मन उदास है 😔" class="mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50">मन उदास है 😔</button>
+            <button type="button" data-mood="अकेलापन महसूस हो रहा है 🌙" class="mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50">अकेलापन 🌙</button>
+            <button type="button" data-mood="दोस्त चाहिए 🤝" class="mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50">दोस्त चाहिए 🤝</button>
+            <button type="button" data-mood="तनाव / स्ट्रेस 💭" class="mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50">तनाव / स्ट्रेस 💭</button>
+          </div>
+        </div>
+
+        <!-- Share Invite Link & Send Friend Request Card -->
+        <div class="glass-card rounded-2xl p-5 space-y-4 border border-indigo-500/30">
+          <div>
+            <h3 class="text-sm font-bold text-indigo-300 flex items-center gap-1.5">
+              🔗 अपना लिंक शेयर करें और दोस्त जोड़ें
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">किसी को भी यह लिंक भेजकर बिना चेहरा दिखाए अपने साथ जोड़ें:</p>
+          </div>
+
+          <!-- Copyable Personal Invite Link -->
+          <div class="space-y-1.5">
+            <label for="myInviteLinkInput" class="block text-[11px] font-medium text-slate-300">आपका पर्सनल इनवाइट लिंक:</label>
+            <div class="flex gap-1.5">
+              <input id="myInviteLinkInput" type="text" readonly value="https://veilchat.live/u/ShadowFox_99?invite=VC99" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-indigo-200 font-mono focus:outline-none" />
+              <button id="copyInviteLinkBtn" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shrink-0 transition-all">
+                📋 कॉपी करें
+              </button>
+            </div>
+          </div>
+
+          <!-- Send Friend Request via Link or Handle -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-800">
+            <label for="friendRequestInput" class="block text-[11px] font-medium text-slate-300">दोस्त का लिंक या @Handle डालकर रिक्वेस्ट भेजें:</label>
+            <div class="flex gap-1.5">
+              <input id="friendRequestInput" type="text" placeholder="उदा: @MysticWave या invite link..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500" />
+              <button id="sendFriendReqBtn" type="button" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 transition-all">
+                ➕ भेजें
+              </button>
+            </div>
+          </div>
+
+          <!-- Pending Incoming Friend Requests -->
+          <div class="pt-2 border-t border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-amber-300">🔔 आई हुई फ्रेंड रिक्वेस्ट (Incoming)</span>
+              <span id="pendingReqBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">2</span>
+            </div>
+            <div id="incomingRequestsList" class="space-y-2"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center & Right Column: Create Vent Post & Feed List -->
+      <div class="lg:col-span-8 space-y-5">
+        <!-- Create Anonymous Post Box -->
+        <div class="glass-card rounded-2xl p-5">
+          <h2 class="text-base font-semibold text-white mb-1">अपने मन की बात लिखें (चेहरा पूरी तरह हाइड रहेगा)</h2>
+          <p class="text-xs text-slate-400 mb-3">अगर आपको किसी बात का बुरा लग रहा है या किसी से बात करनी है, तो यहाँ पोस्ट करें। लोग रिएक्ट करके आपसे दोस्ती और बात कर सकेंगे।</p>
+          
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <label for="postMoodSelect" class="text-xs text-slate-300 font-medium">आपका मूड:</label>
+              <select id="postMoodSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-indigo-200 focus:outline-none focus:border-indigo-500">
+                <option value="मन उदास है 😔">मन उदास है 😔 (Feeling Low)</option>
+                <option value="अकेलापन महसूस हो रहा है 🌙">अकेलापन महसूस हो रहा है 🌙 (Lonely)</option>
+                <option value="दोस्त चाहिए 🤝">सच्चा दोस्त चाहिए 🤝 (Need a Friend)</option>
+                <option value="तनाव / स्ट्रेस 💭">तनाव / करियर की चिंता 💭 (Stressed)</option>
+              </select>
+            </div>
+
+            <textarea id="postContentInput" rows="3" placeholder="यहाँ लिखें कि आज आपको कैसा महसूस हो रहा है... (आपकी असली पहचान किसी को नहीं दिखेगी)" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                🛡️ पोस्ट आपके फेस-मास्क अवतार के साथ पब्लिश होगी
+              </span>
+              <button id="publishPostBtn" type="button" class="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all">
+                ✨ बिना चेहरा दिखाए पोस्ट करें
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Posts Feed Container -->
+        <div id="postsListContainer" class="space-y-4"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: FRIENDS & 1-ON-1 CHAT ==================== -->
+    <section id="viewFriends" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Friends List -->
+      <div class="lg:col-span-4 glass-card rounded-2xl p-4 flex flex-col h-[560px]">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+          <div>
+            <h2 class="text-base font-bold text-white">आपके मास्क्ड दोस्त</h2>
+            <p class="text-xs text-slate-400">रिएक्शन और पोस्ट से जुड़े दोस्त</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold" id="friendsListCount">3 Connected</span>
+        </div>
+        <div id="friendsSidebarList" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
+      </div>
+
+      <!-- Active 1-on-1 Chat Window -->
+      <div class="lg:col-span-8 glass-card rounded-2xl p-4 flex flex-col h-[560px]">
+        <!-- Chat Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-800">
+          <div class="flex items-center gap-3">
+            <div id="activeChatAvatar" class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-2xl">🦉</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="activeChatHandle" class="font-bold text-white text-base">@NightOwl_21</h3>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">Online • Face Hidden</span>
+              </div>
+              <p id="activeChatStatus" class="text-xs text-slate-400">आपके पोस्ट पर '🫂 गले लगाएं' रिएक्ट करके जुड़े</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="startPersonalVideoCallBtn" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-600/25 flex items-center gap-1.5 transition-all">
+              📹 पर्सनल वीडियो कॉल करें (Masked)
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Messages Scroll Area -->
+        <div id="chatMessagesArea" class="flex-1 overflow-y-auto space-y-3 p-2 bg-slate-900/50 rounded-xl border border-slate-800/70"></div>
+
+        <!-- Quick Icebreakers & Input -->
+        <div class="pt-3 mt-2 space-y-2">
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-quick="नमस्ते! आपका पोस्ट पढ़ा, मैं आपकी बात सुनने के लिए यहाँ हूँ 💙" class="quick-msg-btn text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">💙 मैं आपकी बात सुनने के लिए यहाँ हूँ</button>
+            <button type="button" data-quick="क्या हम फेस-मास्क वीडियो कॉल पर बात कर सकते हैं?" class="quick-msg-btn text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">📹 क्या हम मास्क्ड वीडियो कॉल करें?</button>
+            <button type="button" data-quick="चिंता मत करो, सब ठीक हो जाएगा 🫂" class="quick-msg-btn text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🫂 सब ठीक हो जाएगा</button>
+          </div>
+          <div class="flex gap-2">
+            <input id="chatInputBox" type="text" placeholder="मैसेज लिखें... (Enter दबाएं)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500" />
+            <button id="sendChatMsgBtn" type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all">
+              भेजें ➤
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: 1-ON-1 PERSONAL MASKED VIDEO CALL ==================== -->
+    <section id="viewVideo" class="hidden space-y-5">
+      <!-- Top Safety & Consent Strip -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-indigo-500 flex flex-wrap items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">1-on-1 Personal Video Call</span>
+            <span id="callModeBadge" class="text-xs font-medium text-emerald-400">🔒 E2EE + 60s RAM Safety Buffer Active</span>
+          </div>
+          <p class="text-xs text-slate-300">
+            <strong>प्राइवेसी गारंटी:</strong> दोनों यूज़र्स का चेहरा हर समय 3D मास्क से ढका रहता है। सामान्य कॉल खत्म होने पर कोई डेटा सेव नहीं होता। केवल <strong>"Report Abuse"</strong> दबाने पर अंतिम 60 सेकंड की क्लिप एडमिन के पास सबूत के तौर पर जाती है।
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <label for="callPartnerSelect" class="text-xs text-slate-400">किससे कॉल कर रहे हैं:</label>
+          <select id="callPartnerSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-medium">
+            <option value="u_owl">🦉 @NightOwl_21 (Personal Friend)</option>
+            <option value="u_lotus">🪷 @CalmSoul_07 (Personal Friend)</option>
+            <option value="u_cyber">🤖 @RogueGlitch_404 (Stranger / Test Abuser)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Dual Video Stage -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Remote Peer Video Canvas (Friend / Caller) -->
+        <div class="glass-card rounded-2xl p-4 relative overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between mb-2.5 z-10">
+            <div class="flex items-center gap-2">
+              <span id="remotePartnerBadgeIcon" class="text-xl">🦉</span>
+              <div>
+                <h3 id="remotePartnerName" class="text-sm font-bold text-white">@NightOwl_21</h3>
+                <span id="remoteMaskStatusText" class="text-[11px] text-indigo-300">🎭 3D Mask Active (असली चेहरा छुपा है)</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-700 text-xs font-mono text-rose-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500 pulse-ring"></span>
+                RAM बफर: <span id="rollingBufferTimer">00:18</span> / 00:60s
+              </span>
+            </div>
+          </div>
+
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden aspect-video border border-slate-800 flex items-center justify-center">
+            <canvas id="remoteVideoCanvas" width="640" height="360" class="w-full h-full object-cover"></canvas>
+            <!-- Watermark / Screenshot Blocker Indicator -->
+            <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-md bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300">
+              📵 FLAG_SECURE: Screenshot & Screen Recording Blocked
+            </div>
+            <!-- Simulate Misbehavior Button (For testing Admin Evidence) -->
+            <button id="simulateMisbehaviorBtn" type="button" class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-[11px] font-medium transition-all">
+              ⚡ डेमो: सामने वाले का अभद्र व्यवहार टेस्ट करें
+            </button>
+          </div>
+        </div>
+
+        <!-- Local User Video Canvas (You — Live Webcam or Simulated + Real-time AR Face Mask) -->
+        <div class="glass-card rounded-2xl p-4 relative overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between mb-2.5 z-10">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🦊</span>
+              <div>
+                <h3 class="text-sm font-bold text-white">आप (@ShadowFox_99)</h3>
+                <span id="localCameraSourceText" class="text-[11px] text-emerald-400">🎭 फेस-हाइड फिल्टर चालू है</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="toggleWebcamBtn" type="button" class="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-400/40 text-indigo-200 text-xs font-medium transition-all">
+                📷 असली वेबकैम ऑन करें (With Mask)
+              </button>
+            </div>
+          </div>
+
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden aspect-video border border-slate-800 flex items-center justify-center">
+            <!-- Hidden raw video element for webcam stream -->
+            <video id="HiddenWebcamVideo" autoplay playsinline muted class="hidden"></video>
+            <canvas id="localVideoCanvas" width="640" height="360" class="w-full h-full object-cover"></canvas>
+            <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-md bg-slate-950/80 border border-slate-800 text-[11px] text-emerald-300">
+              🛡️ आपका असली चेहरा सामने वाले को नहीं दिख रहा
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call Control Bar -->
+      <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <!-- Mask Switcher During Call -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-slate-300">कॉल में अपना मास्क बदलें:</span>
+          <button type="button" data-callmask="fox" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white">🦊 Fox</button>
+          <button type="button" data-callmask="owl" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🦉 Owl</button>
+          <button type="button" data-callmask="cyber" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🤖 Cyber</button>
+          <button type="button" data-callmask="lotus" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪷 Lotus</button>
+          <button type="button" data-callmask="pixel" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🟪 Pixel Blur</button>
+        </div>
+
+        <!-- Action Buttons: Voice Pitch, Mutual Face Reveal, Report 60s Clip, End Call -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button id="toggleVoiceModBtn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all">
+            🎙️ वॉइस चेंजर: <span id="voiceModStatus">OFF</span>
+          </button>
+
+          <button id="mutualRevealBtn" type="button" class="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-xs font-semibold border border-purple-500/40 transition-all">
+            🤝 सहमति से फेस दिखाएं (Mutual Unmask)
+          </button>
+
+          <button id="openReportModalBtn" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-rose-600/30 flex items-center gap-1.5 transition-all">
+            🚨 अभद्रता की रिपोर्ट करें (Save 60s Proof)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: ADMIN MODERATION & KYC FACE VAULT ==================== -->
+    <section id="viewAdmin" class="hidden space-y-6">
+      <!-- Admin Header Banner -->
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-amber-400 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold uppercase">Restricted Admin Panel</span>
+            <span class="text-xs text-slate-400">Audit Logging Enabled • DPDP Act Compliant</span>
+          </div>
+          <h2 class="text-lg font-bold text-white mt-1">एडमिन मॉडरेशन, 60-सेकंड कॉल सबूत और KYC फेस वॉल्ट</h2>
+          <p class="text-xs text-slate-300">
+            सामान्य यूज़र्स एक-दूसरे का चेहरा कभी नहीं देख सकते। यहाँ एडमिन केवल <strong>रिपोर्ट की गई कॉल्स की 60-सेकंड की रिकॉर्डिंग</strong> देख सकता है और दोषी यूज़र का <strong>असली चेहरा (KYC Selfie)</strong> अनलॉक करके उसे परमानेंट बैन कर सकता है।
+          </p>
+        </div>
+        <div class="flex gap-3 text-center">
+          <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl">
+            <div class="text-lg font-bold text-rose-400" id="adminStatReports">1</div>
+            <div class="text-[11px] text-slate-400">रिपोर्टेड क्लिप्स (60s)</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl">
+            <div class="text-lg font-bold text-amber-300" id="adminStatUnlocked">1</div>
+            <div class="text-[11px] text-slate-400">अनलॉक किए गए चेहरे</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl">
+            <div class="text-lg font-bold text-emerald-400" id="adminStatBanned">0</div>
+            <div class="text-[11px] text-slate-400">बैन किए गए यूज़र</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Reported 60-Second Call Clips Queue -->
+        <div class="lg:col-span-7 space-y-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-rose-300 flex items-center gap-2">
+            📹 रिपोर्ट की गई वीडियो कॉल्स (Last 60-Second Evidence Clips)
+          </h3>
+          <div id="adminReportsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- Encrypted User KYC Face Vault & Audit Logs -->
+        <div class="lg:col-span-5 space-y-5">
+          <div class="glass-card rounded-2xl p-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-1">
+              🔐 यूज़र KYC फेस वॉल्ट (Admin Face Access)
+            </h3>
+            <p class="text-xs text-slate-400 mb-3">
+              हर यूज़र की साइनअप सेल्फी एन्क्रिप्टेड रहती है। एडमिन कारण दर्ज करके किसी भी यूज़र का असली चेहरा देख सकता है।
+            </p>
+            <div id="adminKycVaultList" class="space-y-3"></div>
+          </div>
+
+          <!-- Admin Audit Trail -->
+          <div class="glass-card rounded-2xl p-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+              📜 एडमिन ऑडिट लॉग (Immutable Security Log)
+            </h3>
+            <div id="adminAuditLogList" class="space-y-2 max-h-52 overflow-y-auto text-xs"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: REPORT ABUSE & UPLOAD 60s BUFFER ==================== -->
+  <div id="reportAbuseModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-rose-500/40 shadow-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold text-rose-300 flex items-center gap-2">
+          🚨 अभद्रता की रिपोर्ट करें (60s Video Proof)
+        </h3>
+        <button id="closeReportModalBtn" type="button" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+      <p class="text-xs text-slate-300 mb-4">
+        यह रिपोर्ट सबमिट करते ही फोन की RAM में मौजूद <strong>पिछले 60 सेकंड की कॉल रिकॉर्डिंग</strong> और सामने वाले यूज़र की <strong>असली KYC पहचान</strong> एडमिन पैनल में अनलॉक हो जाएगी।
+      </p>
+
+      <div class="space-y-3">
+        <div>
+          <label for="reportReasonSelect" class="block text-xs font-medium text-slate-300 mb-1">शिकायत का कारण चुनें:</label>
+          <select id="reportReasonSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+            <option value="अभद्र भाषा / गाली-गलौज (Verbal Harassment)">अभद्र भाषा / गाली-गलौज (Verbal Harassment)</option>
+            <option value="अश्लील हरकत / न्यूडिटी (Indecent Exposure)">अश्लील हरकत / न्यूडिटी (Indecent Exposure)</option>
+            <option value="धमकी या ब्लैकमेलिंग (Threat / Blackmail)">धमकी या ब्लैकमेलिंग (Threat / Blackmail)</option>
+            <option value="स्पैम या स्कैम (Spam / Scam)">स्पैम या स्कैम (Spam / Scam)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="reportNotesInput" class="block text-xs font-medium text-slate-300 mb-1">अतिरिक्त विवरण (वैकल्पिक):</label>
+          <textarea id="reportNotesInput" rows="2" placeholder="बताएं क्या हुआ..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+        </div>
+
+        <div class="p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 text-xs text-rose-200 flex items-center justify-between">
+          <span>📎 अटैच्ड सबूत: <strong>Rolling_Buffer_Last_60s.webm</strong></span>
+          <span class="font-mono text-[11px] bg-rose-500/30 px-2 py-0.5 rounded">ENCRYPTED</span>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button id="cancelReportBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-medium">रद्द करें</button>
+          <button id="submitReportBtn" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/30">
+            सबूत के साथ एडमिन को भेजें
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden max-w-sm glass-card border border-indigo-500/50 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs font-medium flex items-center gap-2.5">
+    <span id="toastIcon" class="text-base">✅</span>
+    <span id="toastMessage">Action completed</span>
+  </div>
+
+  <script>
+    // ==================== GOOGLE FIREBASE CLOUD FIRESTORE (ISOLATED vc_* COLLECTIONS) ====================
+    const vcFirebaseConfig = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86",
+      storageBucket: "safarsaathi-1de86.firebasestorage.app",
+      messagingSenderId: "560392119536",
+      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
+      measurementId: "G-0PB4K9PWVD"
+    };
+    let vcDb = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        const app = !firebase.apps.length ? firebase.initializeApp(vcFirebaseConfig) : firebase.app();
+        vcDb = firebase.firestore(app);
+        console.log('VeilChat Cloud Firestore Connected (Isolated vc_* collections)');
+      }
+    } catch (err) {
+      console.warn('Firestore fallback to local mode:', err);
+    }
+
+    function syncPostToCloud(postObj) {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_posts').doc(postObj.id).set(postObj, { merge: true });
+      } catch (e) {}
+    }
+
+    function syncReportToCloud(reportObj) {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_reports').doc(reportObj.id).set(reportObj, { merge: true });
+      } catch (e) {}
+    }
+
+    function startCloudListeners() {
+      if (!vcDb) return;
+      try {
+        vcDb.collection('vc_posts').limit(50).onSnapshot((snap) => {
+          snap.docChanges().forEach((change) => {
+            const data = change.doc.data();
+            if (data && data.id) {
+              const idx = state.posts.findIndex((p) => p.id === data.id);
+              if (idx === -1) {
+                state.posts.unshift(data);
+              } else {
+                state.posts[idx] = data;
+              }
+            }
+          });
+          if (state.activeTab === 'feed') renderFeed();
+        });
+
+        vcDb.collection('vc_reports').limit(50).onSnapshot((snap) => {
+          snap.docChanges().forEach((change) => {
+            const data = change.doc.data();
+            if (data && data.id) {
+              const idx = state.abuseReports.findIndex((r) => r.id === data.id);
+              if (idx === -1) {
+                state.abuseReports.unshift(data);
+              } else {
+                state.abuseReports[idx] = data;
+              }
+            }
+          });
+          if (state.activeTab === 'admin') renderAdminPanel();
+        });
+      } catch (e) {}
+    }
+
+    // ==================== APPLICATION STATE ====================
+    const MASK_META = {
+      fox:   { emoji: '🦊', name: 'Neon Fox Mask', color: '#6366f1', accent: '#a855f7' },
+      owl:   { emoji: '🦉', name: 'Astral Owl Mask', color: '#0ea5e9', accent: '#38bdf8' },
+      cyber: { emoji: '🤖', name: 'Cyber Punk Visor', color: '#10b981', accent: '#34d399' },
+      lotus: { emoji: '🪷', name: 'Zen Calm Mask', color: '#ec4899', accent: '#f472b6' },
+      pixel: { emoji: '🟪', name: 'Deep Pixel Blur', color: '#8b5cf6', accent: '#c084fc' }
+    };
+
+    const state = {
+      activeTab: 'admin',
+      myMask: 'fox',
+      moodFilter: 'ALL',
+      activeFriendId: 'u_owl',
+      activeCallPartnerId: 'u_owl',
+      incomingRequests: [
+        { id: 'req_1', userId: 'u_star', handle: '@Starlight_44', mask: 'lotus', note: 'आपके इनवाइट लिंक से जुड़ना चाहते हैं' },
+        { id: 'req_2', userId: 'u_echo', handle: '@SilentEcho_12', mask: 'owl', note: 'पोस्ट फीड से फ्रेंड रिक्वेस्ट भेजी' }
+      ],
+      sentRequests: [],
+      voiceModulatorOn: false,
+      mutualRevealActive: false,
+      remoteMisbehaving: false,
+      webcamStream: null,
+      usingLiveWebcam: false,
+      rollingBufferSeconds: 18,
+
+      users: {
+        u_owl: {
+          id: 'u_owl',
+          handle: '@NightOwl_21',
+          mask: 'owl',
+          realName: 'आर्यन शर्मा (Aryan Sharma)',
+          phone: '+91 98XXXXXX42',
+          city: 'Jaipur, RJ',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#f59e0b',
+          relationNote: "आपके पोस्ट पर '🫂 गले लगाएं' रिएक्ट करके जुड़े"
+        },
+        u_lotus: {
+          id: 'u_lotus',
+          handle: '@CalmSoul_07',
+          mask: 'lotus',
+          realName: 'नेहा वर्मा (Neha Verma)',
+          phone: '+91 97XXXXXX19',
+          city: 'Indore, MP',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#10b981',
+          relationNote: "आपने इनके पोस्ट पर '💙 साथ हैं' रिएक्ट किया"
+        },
+        u_cyber: {
+          id: 'u_cyber',
+          handle: '@RogueGlitch_404',
+          mask: 'cyber',
+          realName: 'विक्रम राठौड़ (Vikram Rathore)',
+          phone: '+91 91XXXXXX88',
+          city: 'Delhi NCR',
+          kycUnlocked: true,
+          banned: false,
+          faceColor: '#ef4444',
+          relationNote: "रैंडम कॉल यूज़र (1 Abuse Report Filed)"
+        }
+      },
+
+      posts: [
+        {
+          id: 'p1',
+          userId: 'u_owl',
+          handle: '@NightOwl_21',
+          mask: 'owl',
+          mood: 'मन उदास है 😔',
+          timeAgo: '12 मिनट पहले',
+          content: 'आज ऑफिस और घर दोनों जगह बहुत अकेलापन महसूस हो रहा है। किसी को अपना चेहरा नहीं दिखाना चाहता, बस कोई ऐसा दोस्त चाहिए जो बिना जज किए 10 मिनट बात कर सके।',
+          reactions: { hug: 14, support: 9, listen: 6 },
+          userReacted: {},
+          comments: [
+            { author: '@CalmSoul_07', mask: '🪷', text: 'हिम्मत मत हारो दोस्त, मैं यहाँ हूँ। चैट में मैसेज करो, बात करते हैं!' }
+          ]
+        },
+        {
+          id: 'p2',
+          userId: 'u_lotus',
+          handle: '@CalmSoul_07',
+          mask: 'lotus',
+          mood: 'तनाव / स्ट्रेस 💭',
+          timeAgo: '35 मिनट पहले',
+          content: 'एग्जाम और करियर के प्रेशर से नींद नहीं आ रही। सोशल मीडिया पर सब नकली खुश दिखते हैं, कम से कम यहाँ बिना फेस दिखाए सच बोल सकती हूँ।',
+          reactions: { hug: 22, support: 18, listen: 11 },
+          userReacted: {},
+          comments: [
+            { author: '@ShadowFox_99', mask: '🦊', text: 'बिल्कुल सही कहा! जब भी बात करने का मन हो, हम मास्क्ड कॉल कर सकते हैं।' }
+          ]
+        },
+        {
+          id: 'p3',
+          userId: 'u_cyber',
+          handle: '@RogueGlitch_404',
+          mask: 'cyber',
+          mood: 'दोस्त चाहिए 🤝',
+          timeAgo: '1 घंटे पहले',
+          content: 'देर रात जागने वाले लोग हैं क्या यहाँ? गेमिंग और म्यूजिक पर बात करने के लिए नए दोस्त चाहिए।',
+          reactions: { hug: 5, support: 8, listen: 4 },
+          userReacted: {},
+          comments: []
+        }
+      ],
+
+      chats: {
+        u_owl: [
+          { sender: 'them', text: 'हाय @ShadowFox_99! मेरे पोस्ट पर सपोर्ट करने के लिए शुक्रिया 🙏', time: '4:45 PM' },
+          { sender: 'me', text: 'कोई बात नहीं दोस्त! कैसा महसूस कर रहे हो अभी?', time: '4:46 PM' },
+          { sender: 'them', text: 'थोड़ा बेहतर। क्या हम फेस-मास्क ऑन रखकर पर्सनल वीडियो कॉल पर बात कर सकते हैं?', time: '4:48 PM' }
+        ],
+        u_lotus: [
+          { sender: 'them', text: 'नमस्ते! यहाँ बिना चेहरा दिखाए बात करना कितना सुकून देता है।', time: '3:20 PM' },
+          { sender: 'me', text: 'हाँ, कोई जजमेंट नहीं है यहाँ।', time: '3:22 PM' }
+        ],
+        u_cyber: [
+          { sender: 'them', text: 'हेल्लो! कॉल जॉइन करो।', time: '2:10 PM' }
+        ]
+      },
+
+      abuseReports: [
+        {
+          id: 'REP-9041',
+          accusedId: 'u_cyber',
+          reporterHandle: '@CalmSoul_07',
+          reason: 'अभद्र भाषा / गाली-गलौज (Verbal Harassment)',
+          notes: 'कॉल के 40वें सेकंड पर अचानक चिल्लाने और गाली देने लगा।',
+          bufferDuration: '60 सेकंड (00:00 - 01:00)',
+          timestamp: 'आज, 04:15 PM',
+          status: 'pending_review',
+          autoDeleteDays: 30
+        }
+      ],
+
+      auditLogs: [
+        {
+          time: '04:16 PM',
+          text: 'System Auto-Unlock: Report #REP-9041 प्राप्त होने पर @RogueGlitch_404 की 60s क्लिप और KYC प्रोफाइल एडमिन जांच हेतु अनलॉक की गई।'
+        }
+      ]
+    };
+
+    // ==================== HELPER: TOAST NOTIFICATION ====================
+    let toastTimeout = null;
+    function showToast(message, icon = '✅') {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = message;
+      banner.classList.remove('hidden');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3600);
+    }
+
+    // ==================== TAB NAVIGATION ====================
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      const views = {
+        feed: document.getElementById('viewFeed'),
+        friends: document.getElementById('viewFriends'),
+        video: document.getElementById('viewVideo'),
+        admin: document.getElementById('viewAdmin')
+      };
+      const buttons = {
+        feed: document.getElementById('tabBtnFeed'),
+        friends: document.getElementById('tabBtnFriends'),
+        video: document.getElementById('tabBtnVideo'),
+        admin: document.getElementById('tabBtnAdmin')
+      };
+
+      Object.keys(views).forEach((k) => {
+        if (k === tabName) {
+          views[k].classList.remove('hidden');
+          buttons[k].className = 'nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow';
+        } else {
+          views[k].classList.add('hidden');
+          buttons[k].className = k === 'admin'
+            ? 'nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-amber-300 hover:text-amber-200 flex items-center gap-1'
+            : 'nav-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white';
+        }
+      });
+
+      if (tabName === 'friends') renderFriendsAndChat();
+      if (tabName === 'admin') renderAdminPanel();
+    }
+
+    // ==================== RENDER FEED & POSTS ====================
+    function renderFeed() {
+      const container = document.getElementById('postsListContainer');
+      const filtered = state.posts.filter((p) => {
+        const author = state.users[p.userId];
+        if (author && author.banned) return false;
+        return state.moodFilter === 'ALL' || p.mood === state.moodFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card rounded-2xl p-8 text-center text-slate-400 text-sm">
+            इस मूड कैटेगरी में अभी कोई पोस्ट नहीं है। आप पहला पोस्ट लिख सकते हैं!
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map((post) => {
+        const maskInfo = MASK_META[post.mask] || MASK_META.fox;
+        const commentsHtml = post.comments.map((c) => `
+          <div class="flex items-start gap-2.5 bg-slate-900/70 px-3 py-2 rounded-xl border border-slate-800/80 text-xs">
+            <span class="text-base">${c.mask}</span>
+            <div>
+              <span class="font-semibold text-indigo-300">${c.author}:</span>
+              <span class="text-slate-200 ml-1">${c.text}</span>
+            </div>
+          </div>
+        `).join('');
+
+        return `
+          <article class="glass-card rounded-2xl p-5 transition-all hover:border-indigo-500/40">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-slate-900 border border-indigo-500/30 flex items-center justify-center text-2xl">
+                  ${maskInfo.emoji}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-white text-sm">${post.handle}</span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">${post.mood}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-400">${post.timeAgo} • फेस हाइड प्रोफाइल</div>
+                </div>
+              </div>
+
+              ${post.userId !== 'me' ? `
+                <button type="button" data-connect-user="${post.userId}" class="connect-friend-btn px-3 py-1.5 rounded-xl bg-indigo-600/25 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-500/40 text-xs font-semibold transition-all">
+                  🤝 दोस्त बनें और बात करें
+                </button>
+              ` : `<span class="text-[11px] text-emerald-400 font-medium">आपका पोस्ट</span>`}
+            </div>
+
+            <p class="text-sm text-slate-100 leading-relaxed mb-4 bg-slate-900/50 p-3.5 rounded-xl border border-slate-800/60">
+              "${post.content}"
+            </p>
+
+            <!-- Supportive Reactions Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" data-post-id="${post.id}" data-react="hug" class="react-btn px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${post.userReacted.hug ? 'bg-pink-600/30 border-pink-500 text-pink-200' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-pink-500/50'}">
+                  🫂 गले लगाएं (${post.reactions.hug})
+                </button>
+                <button type="button" data-post-id="${post.id}" data-react="support" class="react-btn px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${post.userReacted.support ? 'bg-indigo-600/30 border-indigo-500 text-indigo-200' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-indigo-500/50'}">
+                  💙 हम साथ हैं (${post.reactions.support})
+                </button>
+                <button type="button" data-post-id="${post.id}" data-react="listen" class="react-btn px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${post.userReacted.listen ? 'bg-emerald-600/30 border-emerald-500 text-emerald-200' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-emerald-500/50'}">
+                  👂 बात सुनने को तैयार (${post.reactions.listen})
+                </button>
+              </div>
+            </div>
+
+            <!-- Comments List & Add Comment -->
+            <div class="mt-3 space-y-2">
+              ${commentsHtml}
+              <div class="flex gap-2 pt-1">
+                <input type="text" data-comment-input="${post.id}" placeholder="हौसला बढ़ाने के लिए कुछ लिखें..." class=" flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500" />
+                <button type="button" data-comment-submit="${post.id}" class="submit-comment-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600 text-xs font-semibold text-slate-200 hover:text-white transition-all">
+                  कमेंट करें
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // ==================== RENDER FRIENDS & 1-ON-1 CHAT ====================
+    function renderFriendsAndChat() {
+      const sidebar = document.getElementById('friendsSidebarList');
+      const activeUserIds = Object.keys(state.users).filter((uid) => !state.users[uid].banned);
+
+      document.getElementById('friendCountBadge').textContent = activeUserIds.length;
+      document.getElementById('friendsListCount').textContent = `${activeUserIds.length} Connected`;
+
+      sidebar.innerHTML = activeUserIds.map((uid) => {
+        const u = state.users[uid];
+        const mask = MASK_META[u.mask] || MASK_META.fox;
+        const isSelected = uid === state.activeFriendId;
+        const msgs = state.chats[uid] || [];
+        const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1].text : 'चैट शुरू करें';
+
+        return `
+          <button type="button" data-friend-id="${uid}" class="select-friend-btn w-full text-left p-3 rounded-xl border transition-all flex items-center gap-3 ${isSelected ? 'bg-indigo-600/20 border-indigo-500/60' : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'}">
+            <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-xl shrink-0">
+              ${mask.emoji}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-sm text-white truncate">${u.handle}</span>
+                <span class="text-[10px] text-emerald-400">● Masked</span>
+              </div>
+              <p class="text-xs text-slate-400 truncate">${lastMsg}</p>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      const activeFriend = state.users[state.activeFriendId] || state.users.u_owl;
+      const activeMask = MASK_META[activeFriend.mask] || MASK_META.owl;
+      document.getElementById('activeChatAvatar').textContent = activeMask.emoji;
+      document.getElementById('activeChatHandle').textContent = activeFriend.handle;
+      document.getElementById('activeChatStatus').textContent = activeFriend.relationNote;
+
+      const chatArea = document.getElementById('chatMessagesArea');
+      const chatList = state.chats[state.activeFriendId] || [];
+      chatArea.innerHTML = chatList.map((m) => `
+        <div class="flex ${m.sender === 'me' ? 'justify-end' : 'justify-start'}">
+          <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs sm:text-sm ${m.sender === 'me' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700'}">
+            <p>${m.text}</p>
+            <div class="text-[10px] opacity-70 mt-1 text-right">${m.time}</div>
+          </div>
+        </div>
+      `).join('');
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // ==================== VIDEO CALL CANVAS RENDERING (MASKED + 60s BUFFER) ====================
+    let animFrameId = null;
+    let tickAngle = 0;
+
+    function drawMaskOverlay(ctx, cx, cy, maskKey, tick, isUnmasked, realNameLabel) {
+      if (isUnmasked) {
+        // Draw friendly unmasked human silhouette + verified face label (when Mutual Reveal is ON)
+        ctx.fillStyle = '#fde68a';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 10, 58, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(cx - 20, cy - 22, 6, 0, Math.PI * 2);
+        ctx.arc(cx + 20, cy - 22, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 5, 22, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+        ctx.fillRect(cx - 105, cy + 62, 210, 26);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`🔓 Mutual Consent: ${realNameLabel}`, cx, cy + 79);
+        return;
+      }
+
+      const meta = MASK_META[maskKey] || MASK_META.fox;
+      const bob = Math.sin(tick * 0.06) * 5;
+
+      if (maskKey === 'pixel') {
+        // Deep Pixel Blur Matrix over face region
+        const size = 16;
+        for (let x = cx - 64; x < cx + 64; x += size) {
+          for (let y = cy - 74 + bob; y < cy + 54 + bob; y += size) {
+            const hue = 250 + ((x * y + Math.floor(tick * 2)) % 60);
+            ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.92)`;
+            ctx.fillRect(x, y, size - 2, size - 2);
+          }
+        }
+      } else {
+        // Glowing 3D-style AR Mask Shield
+        const grad = ctx.createRadialGradient(cx, cy + bob, 10, cx, cy + bob, 76);
+        grad.addColorStop(0, meta.accent);
+        grad.addColorStop(1, meta.color);
+
+        ctx.save();
+        ctx.shadowColor = meta.accent;
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 6 + bob, 66, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Glowing AR wireframe rings
+        ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 6 + bob, 72, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Emoji Crest
+        ctx.font = '56px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(meta.emoji, cx, cy - 6 + bob);
+      }
+
+      // Audio visualizer bars around mouth
+      ctx.fillStyle = '#38bdf8';
+      for (let i = -4; i <= 4; i++) {
+        const barH = 6 + Math.abs(Math.sin(tick * 0.15 + i)) * 16;
+        ctx.fillRect(cx + i * 10 - 3, cy + 72 - barH / 2, 6, barH);
+      }
+    }
+
+    function renderVideoCanvases() {
+      tickAngle += 1;
+      const remoteCanvas = document.getElementById('remoteVideoCanvas');
+      const localCanvas = document.getElementById('localVideoCanvas');
+      if (!remoteCanvas || !localCanvas) return;
+
+      const rCtx = remoteCanvas.getContext('2d');
+      const lCtx = localCanvas.getContext('2d');
+
+      const partner = state.users[state.activeCallPartnerId] || state.users.u_owl;
+
+      // 1. Draw Remote Canvas (Blurred Safe Background + Masked Partner)
+      const rGrad = rCtx.createLinearGradient(0, 0, 640, 360);
+      if (state.remoteMisbehaving) {
+        rGrad.addColorStop(0, '#450a0a');
+        rGrad.addColorStop(1, '#1e1b4b');
+      } else {
+        rGrad.addColorStop(0, '#0f172a');
+        rGrad.addColorStop(1, '#1e1b4b');
+      }
+      rCtx.fillStyle = rGrad;
+      rCtx.fillRect(0, 0, 640, 360);
+
+      // Ambient bokeh circles (simulating blurred room background)
+      rCtx.fillStyle = 'rgba(99, 102, 241, 0.12)';
+      rCtx.beginPath();
+      rCtx.arc(140 + Math.sin(tickAngle * 0.02) * 20, 100, 65, 0, Math.PI * 2);
+      rCtx.arc(500, 260 + Math.cos(tickAngle * 0.02) * 20, 80, 0, Math.PI * 2);
+      rCtx.fill();
+
+      // Shoulders silhouette
+      rCtx.fillStyle = '#1e293b';
+      rCtx.beginPath();
+      rCtx.ellipse(320, 350, 145, 80, 0, Math.PI, 0, false);
+      rCtx.fill();
+
+      drawMaskOverlay(
+        rCtx,
+        320,
+        165,
+        partner.mask,
+        tickAngle,
+        state.mutualRevealActive,
+        partner.handle
+      );
+
+      if (state.remoteMisbehaving) {
+        rCtx.fillStyle = 'rgba(220, 38, 38, 0.92)';
+        rCtx.fillRect(110, 16, 420, 34);
+        rCtx.fillStyle = '#ffffff';
+        rCtx.font = 'bold 13px Inter, sans-serif';
+        rCtx.textAlign = 'center';
+        rCtx.fillText('⚠️ AI Safety Alert: अभद्र भाषा/व्यवहार डिटेक्ट हुआ! Report दबाएं', 320, 37);
+      }
+
+      // 2. Draw Local Canvas (Webcam if active, else stylized background + User's Face Mask)
+      const videoEl = document.getElementById('HiddenWebcamVideo');
+      if (state.usingLiveWebcam && videoEl && videoEl.readyState >= 2) {
+        lCtx.save();
+        lCtx.filter = 'blur(14px) brightness(0.75)';
+        lCtx.drawImage(videoEl, 0, 0, 640, 360);
+        lCtx.restore();
+      } else {
+        const lGrad = lCtx.createLinearGradient(0, 0, 640, 360);
+        lGrad.addColorStop(0, '#111827');
+        lGrad.addColorStop(1, '#311042');
+        lCtx.fillStyle = lGrad;
+        lCtx.fillRect(0, 0, 640, 360);
+
+        lCtx.fillStyle = '#1e293b';
+        lCtx.beginPath();
+        lCtx.ellipse(320, 350, 145, 80, 0, Math.PI, 0, false);
+        lCtx.fill();
+      }
+
+      drawMaskOverlay(
+        lCtx,
+        320,
+        165,
+        state.myMask,
+        tickAngle + 25,
+        state.mutualRevealActive,
+        '@ShadowFox_99 (You)'
+      );
+
+      animFrameId = requestAnimationFrame(renderVideoCanvases);
+    }
+
+    // ==================== ADMIN PANEL RENDERING ====================
+    function renderAdminPanel() {
+      const reportsContainer = document.getElementById('adminReportsContainer');
+      const kycContainer = document.getElementById('adminKycVaultList');
+      const auditContainer = document.getElementById('adminAuditLogList');
+
+      const allUsers = Object.values(state.users);
+      const unlockedCount = allUsers.filter((u) => u.kycUnlocked).length;
+      const bannedCount = allUsers.filter((u) => u.banned).length;
+
+      document.getElementById('adminReportBadge').textContent = state.abuseReports.length;
+      document.getElementById('adminStatReports').textContent = state.abuseReports.length;
+      document.getElementById('adminStatUnlocked').textContent = unlockedCount;
+      document.getElementById('adminStatBanned').textContent = bannedCount;
+
+      // Render Reported 60-Second Call Clips
+      reportsContainer.innerHTML = state.abuseReports.map((rep) => {
+        const accused = state.users[rep.accusedId] || state.users.u_cyber;
+        const mask = MASK_META[accused.mask] || MASK_META.cyber;
+
+        return `
+          <div class="glass-card rounded-2xl p-5 border ${accused.banned ? 'border-emerald-500/40' : 'border-rose-500/40'}">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-xs font-bold">${rep.id}</span>
+                <span class="text-xs text-slate-400">${rep.timestamp}</span>
+              </div>
+              <span class="text-xs px-2.5 py-0.5 rounded-full ${accused.banned ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'} font-semibold">
+                ${accused.banned ? '✅ Action Taken: User Banned' : '⏳ Pending Admin Action'}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 mb-3">
+              <!-- Captured 60s Clip Preview -->
+              <div>
+                <div class="text-[11px] font-semibold text-rose-300 mb-1">📹 60-Second Rolling Buffer Proof:</div>
+                <div class="rounded-lg bg-slate-950 border border-rose-500/30 p-3 text-xs space-y-1.5">
+                  <div class="flex items-center justify-between text-slate-300">
+                    <span>Clip: <code>${rep.id}_60s.webm</code></span>
+                    <span class="text-rose-400 font-mono">01:00s</span>
+                  </div>
+                  <p class="text-[11px] text-slate-400">कारण: <strong class="text-white">${rep.reason}</strong></p>
+                  <p class="text-[11px] text-slate-400">नोट: "${rep.notes}"</p>
+                  <div class="text-[10px] text-amber-300 pt-1">⏳ Auto-Deletes in ${rep.autoDeleteDays} Days (DPDP Policy)</div>
+                </div>
+              </div>
+
+              <!-- Unmasked Real Face Identity (Visible ONLY to Admin) -->
+              <div>
+                <div class="text-[11px] font-semibold text-amber-300 mb-1">👤 आरोपी का असली चेहरा (Admin KYC Unmasked):</div>
+                <div class="rounded-lg bg-slate-950 border border-amber-500/30 p-3 flex items-center gap-3">
+                  <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/30 to-rose-500/30 border border-amber-400 flex flex-col items-center justify-center shrink-0">
+                    <span class="text-xl">🧑🏽</span>
+                    <span class="text-[9px] text-amber-200 font-bold">REAL FACE</span>
+                  </div>
+                  <div class="text-xs space-y-0.5">
+                    <div class="font-bold text-white">${accused.realName}</div>
+                    <div class="text-slate-400">मास्क्ड हैंडल: <span class="text-indigo-300">${accused.handle} (${mask.emoji})</span></div>
+                    <div class="text-slate-400">फ़ोन: ${accused.phone}</div>
+                    <div class="text-slate-400">शहर: ${accused.city}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <span class="text-[11px] text-slate-400">शिकायतकर्ता: <strong class="text-slate-200">${rep.reporterHandle}</strong></span>
+              <div class="flex gap-2">
+                ${!accused.banned ? `
+                  <button type="button" data-ban-user="${accused.id}" class="admin-ban-btn px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/25 transition-all">
+                    🔨 अकाउंट और डिवाइस परमानेंट बैन करें
+                  </button>
+                ` : `
+                  <span class="text-xs text-emerald-400 font-semibold">🚫 यह यूज़र और इसका डिवाइस ब्लॉक किया जा चुका है</span>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Render KYC Vault List
+      kycContainer.innerHTML = allUsers.map((u) => {
+        const mask = MASK_META[u.mask] || MASK_META.fox;
+        return `
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-lg">
+                ${u.kycUnlocked ? '🧑🏽' : mask.emoji}
+              </div>
+              <div>
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  ${u.handle}
+                  ${u.banned ? '<span class="px-1.5 py-0.2 rounded bg-rose-500/30 text-rose-300 text-[10px]">BANNED</span>' : ''}
+                </div>
+                <div class="text-[11px] text-slate-400">
+                  ${u.kycUnlocked
+                    ? `<span class="text-amber-300 font-medium">असली नाम: ${u.realName} (${u.phone})</span>`
+                    : '🔒 असली चेहरा लॉक है (Encrypted KYC)'}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              ${!u.kycUnlocked ? `
+                <button type="button" data-unlock-kyc="${u.id}" class="unlock-kyc-btn px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-[11px] font-semibold">
+                  🔓 KYC फेस देखें
+                </button>
+              ` : `
+                <span class="text-[11px] text-emerald-400 font-medium">✓ Verified</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Render Audit Logs
+      auditContainer.innerHTML = state.auditLogs.map((log) => `
+        <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800/90 text-slate-300">
+          <span class="text-indigo-400 font-mono font-semibold">[${log.time}]</span> ${log.text}
+        </div>
+      `).join('');
+    }
+
+    // ==================== EVENT LISTENERS & HANDLERS ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Render Incoming Friend Requests
+      function renderFriendRequests() {
+        const listEl = document.getElementById('incomingRequestsList');
+        const badgeEl = document.getElementById('pendingReqBadge');
+        if (!listEl || !badgeEl) return;
+        badgeEl.textContent = state.incomingRequests.length;
+
+        if (state.incomingRequests.length === 0) {
+          listEl.innerHTML = '<div class="text-[11px] text-slate-500 py-1">कोई पेंडिंग रिक्वेस्ट नहीं है।</div>';
+          return;
+        }
+
+        listEl.innerHTML = state.incomingRequests.map((r) => {
+          const m = MASK_META[r.mask] || MASK_META.fox;
+          return `
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-lg">${m.emoji}</span>
+                <div class="min-w-0">
+                  <div class="text-xs font-bold text-white truncate">${r.handle}</div>
+                  <div class="text-[10px] text-slate-400 truncate">${r.note}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" data-accept-req="${r.id}" class="accept-req-btn px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold">स्वीकार करें</button>
+                <button type="button" data-reject-req="${r.id}" class="reject-req-btn px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white text-[11px]">✕</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Initial Render
+      renderFeed();
+      renderFriendsAndChat();
+      renderAdminPanel();
+      renderFriendRequests();
+      renderVideoCanvases();
+      startCloudListeners();
+      switchTab('admin');
+
+      // Auto-set Personal Invite Link to live Netlify domain
+      const inviteInputEl = document.getElementById('myInviteLinkInput');
+      if (inviteInputEl && window.location.hostname && !window.location.hostname.includes('localhost')) {
+        inviteInputEl.value = window.location.origin + '/?invite=ShadowFox_99';
+      }
+      // Copy Personal Invite Link
+      document.getElementById('copyInviteLinkBtn').addEventListener('click', () => {
+        const linkInput = document.getElementById('myInviteLinkInput');
+        linkInput.select();
+        try {
+          document.execCommand('copy');
+        } catch (e) {}
+        showToast('आपका इनवाइट लिंक कॉपी हो गया! इसे WhatsApp या कहीं भी शेयर करें।', '🔗');
+      });
+
+      // Send Friend Request by Link or Handle
+      document.getElementById('sendFriendReqBtn').addEventListener('click', () => {
+        const inp = document.getElementById('friendRequestInput');
+        const rawVal = inp.value.trim();
+        if (!rawVal) {
+          showToast('कृपया दोस्त का इनवाइट लिंक या @Handle लिखें!', '⚠️');
+          return;
+        }
+        let handle = rawVal;
+        if (rawVal.includes('/u/')) {
+          handle = '@' + rawVal.split('/u/')[1].split('?')[0];
+        } else if (!rawVal.startsWith('@')) {
+          handle = '@' + rawVal;
+        }
+        const newUid = 'u_custom_' + Date.now();
+        state.users[newUid] = {
+          id: newUid,
+          handle: handle,
+          mask: 'fox',
+          realName: 'वेरिफाइड यूज़र (KYC Locked)',
+          phone: '+91 99XXXXXX00',
+          city: 'India',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#6366f1',
+          relationNote: 'इनवाइट लिंक / फ्रेंड रिक्वेस्ट द्वारा जुड़े'
+        };
+        state.chats[newUid] = [
+          { sender: 'them', text: `नमस्ते! मैंने आपकी फ्रेंड रिक्वेस्ट स्वीकार कर ली है। अब हम मास्क्ड चैट या वीडियो कॉल कर सकते हैं! 🎭`, time: 'अभी' }
+        ];
+        inp.value = '';
+        state.activeFriendId = newUid;
+        renderFriendsAndChat();
+        showToast(`${handle} को फ्रेंड रिक्वेस्ट भेजी गई और वे आपकी दोस्त लिस्ट में जुड़ गए!`, '🤝');
+      });
+
+      // Accept or Reject Incoming Friend Requests
+      document.getElementById('incomingRequestsList').addEventListener('click', (e) => {
+        const accBtn = e.target.closest('.accept-req-btn');
+        if (accBtn) {
+          const reqId = accBtn.getAttribute('data-accept-req');
+          const reqObj = state.incomingRequests.find((r) => r.id === reqId);
+          if (reqObj) {
+            state.incomingRequests = state.incomingRequests.filter((r) => r.id !== reqId);
+            state.users[reqObj.userId] = {
+              id: reqObj.userId,
+              handle: reqObj.handle,
+              mask: reqObj.mask,
+              realName: 'केवाईसी वेरिफाइड (Encrypted)',
+              phone: '+91 96XXXXXX55',
+              city: 'Mumbai, MH',
+              kycUnlocked: false,
+              banned: false,
+              faceColor: '#ec4899',
+              relationNote: reqObj.note
+            };
+            state.chats[reqObj.userId] = [
+              { sender: 'them', text: `हाय @ShadowFox_99! मेरी फ्रेंड रिक्वेस्ट स्वीकार करने के लिए धन्यवाद 💙`, time: 'अभी' }
+            ];
+            // Also add to Video Call Partner dropdown
+            const sel = document.getElementById('callPartnerSelect');
+            if (sel) {
+              const opt = document.createElement('option');
+              opt.value = reqObj.userId;
+              opt.textContent = `${MASK_META[reqObj.mask].emoji} ${reqObj.handle} (Accepted Friend)`;
+              sel.appendChild(opt);
+            }
+            renderFriendRequests();
+            renderFriendsAndChat();
+            showToast(`${reqObj.handle} अब आपके दोस्त बन गए हैं! 'दोस्त और चैट' टैब में बात करें।`, '🎉');
+          }
+          return;
+        }
+
+        const rejBtn = e.target.closest('.reject-req-btn');
+        if (rejBtn) {
+          const reqId = rejBtn.getAttribute('data-reject-req');
+          state.incomingRequests = state.incomingRequests.filter((r) => r.id !== reqId);
+          renderFriendRequests();
+          showToast('फ्रेंड रिक्वेस्ट हटा दी गई।', '🗑️');
+        }
+      });
+
+      // 60-Second Rolling Buffer Counter loop
+      setInterval(() => {
+        state.rollingBufferSeconds = (state.rollingBufferSeconds % 60) + 1;
+        const timerEl = document.getElementById('rollingBufferTimer');
+        if (timerEl) {
+          timerEl.textContent = `00:${String(state.rollingBufferSeconds).padStart(2, '0')}`;
+        }
+      }, 1000);
+
+      // Navigation Tabs
+      document.getElementById('tabBtnFeed').addEventListener('click', () => switchTab('feed'));
+      document.getElementById('tabBtnFriends').addEventListener('click', () => switchTab('friends'));
+      document.getElementById('tabBtnVideo').addEventListener('click', () => switchTab('video'));
+      document.getElementById('tabBtnAdmin').addEventListener('click', () => switchTab('admin'));
+
+      // Global Mask Select
+      document.getElementById('globalMaskSelect').addEventListener('change', (e) => {
+        state.myMask = e.target.value;
+        const meta = MASK_META[state.myMask];
+        document.getElementById('myHeaderMaskIcon').textContent = meta.emoji;
+        document.getElementById('sidebarMaskPreview').textContent = meta.emoji;
+        showToast(`आपका 3D फेस मास्क अब '${meta.name}' पर सेट हो गया है!`, meta.emoji);
+      });
+
+      // Mood Filter Buttons
+      document.getElementById('moodFilterContainer').addEventListener('click', (e) => {
+        const btn = e.target.closest('.mood-filter-btn');
+        if (!btn) return;
+        state.moodFilter = btn.getAttribute('data-mood');
+        document.querySelectorAll('.mood-filter-btn').forEach((b) => {
+          b.className = 'mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 hover:border-indigo-500/50';
+        });
+        btn.className = 'mood-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-600 text-white';
+        renderFeed();
+      });
+
+      // Publish New Anonymous Post
+      document.getElementById('publishPostBtn').addEventListener('click', () => {
+        const input = document.getElementById('postContentInput');
+        const mood = document.getElementById('postMoodSelect').value;
+        const text = input.value.trim();
+        if (!text) {
+          showToast('कृपया पोस्ट करने के लिए अपने मन की बात लिखें।', '⚠️');
+          return;
+        }
+        const newPostObj = {
+          id: 'p_' + Date.now(),
+          userId: 'me',
+          handle: '@ShadowFox_99',
+          mask: state.myMask,
+          mood,
+          timeAgo: 'अभी-अभी',
+          content: text,
+          reactions: { hug: 1, support: 1, listen: 0 },
+          userReacted: {},
+          comments: []
+        };
+        state.posts.unshift(newPostObj);
+        syncPostToCloud(newPostObj);
+        input.value = '';
+        state.moodFilter = 'ALL';
+        renderFeed();
+        showToast('आपका पोस्ट बिना चेहरा दिखाए पब्लिश हो गया है!', '🎭');
+      });
+
+      // Feed Event Delegation (Reactions, Comments, Connect & Chat)
+      document.getElementById('postsListContainer').addEventListener('click', (e) => {
+        const reactBtn = e.target.closest('.react-btn');
+        if (reactBtn) {
+          const postId = reactBtn.getAttribute('data-post-id');
+          const rType = reactBtn.getAttribute('data-react');
+          const post = state.posts.find((p) => p.id === postId);
+          if (post) {
+            if (post.userReacted[rType]) {
+              post.reactions[rType] -= 1;
+              post.userReacted[rType] = false;
+            } else {
+              post.reactions[rType] += 1;
+              post.userReacted[rType] = true;
+              showToast(`आपने ${post.handle} को सपोर्ट रिएक्शन भेजा! अब आप उनसे दोस्ती और चैट कर सकते हैं।`, '💙');
+            }
+            renderFeed();
+          }
+          return;
+        }
+
+        const commentBtn = e.target.closest('.submit-comment-btn');
+        if (commentBtn) {
+          const postId = commentBtn.getAttribute('data-comment-submit');
+          const inputEl = document.querySelector(`input[data-comment-input="${postId}"]`);
+          if (inputEl && inputEl.value.trim()) {
+            const post = state.posts.find((p) => p.id === postId);
+            const myEmoji = MASK_META[state.myMask].emoji;
+            post.comments.push({
+              author: '@ShadowFox_99',
+              mask: myEmoji,
+              text: inputEl.value.trim()
+            });
+            renderFeed();
+            showToast('आपका सपोर्ट कमेंट जुड़ गया!', '💬');
+          }
+          return;
+        }
+
+        const connectBtn = e.target.closest('.connect-friend-btn');
+        if (connectBtn) {
+          const targetUid = connectBtn.getAttribute('data-connect-user');
+          state.activeFriendId = targetUid;
+          switchTab('friends');
+          showToast(`अब आप ${state.users[targetUid].handle} के साथ प्राइवेट चैट या मास्क्ड वीडियो कॉल कर सकते हैं!`, '🤝');
+        }
+      });
+
+      // Friends Sidebar Selection
+      document.getElementById('friendsSidebarList').addEventListener('click', (e) => {
+        const btn = e.target.closest('.select-friend-btn');
+        if (!btn) return;
+        state.activeFriendId = btn.getAttribute('data-friend-id');
+        renderFriendsAndChat();
+      });
+
+      // Send Chat Message
+      function sendChatMessage(textOverride) {
+        const input = document.getElementById('chatInputBox');
+        const msgText = (textOverride !== undefined ? textOverride : input.value).trim();
+        if (!msgText) return;
+
+        if (!state.chats[state.activeFriendId]) {
+          state.chats[state.activeFriendId] = [];
+        }
+        state.chats[state.activeFriendId].push({
+          sender: 'me',
+          text: msgText,
+          time: 'अभी'
+        });
+        if (textOverride === undefined) input.value = '';
+        renderFriendsAndChat();
+
+        // Simulated warm reply from masked friend
+        setTimeout(() => {
+          const friend = state.users[state.activeFriendId];
+          if (!friend || friend.banned) return;
+          state.chats[state.activeFriendId].push({
+            sender: 'them',
+            text: 'शुक्रिया दोस्त! चलो ऊपर "पर्सनल वीडियो कॉल" बटन दबाकर फेस-मास्क कॉल पर बात करते हैं 🎭',
+            time: 'अभी'
+          });
+          if (state.activeTab === 'friends') renderFriendsAndChat();
+        }, 900);
+      }
+
+      document.getElementById('sendChatMsgBtn').addEventListener('click', () => sendChatMessage());
+      document.getElementById('chatInputBox').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendChatMessage();
+      });
+
+      document.querySelectorAll('.quick-msg-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          sendChatMessage(btn.getAttribute('data-quick'));
+        });
+      });
+
+      // Start Personal Video Call from Chat Header
+      document.getElementById('startPersonalVideoCallBtn').addEventListener('click', () => {
+        state.activeCallPartnerId = state.activeFriendId;
+        document.getElementById('callPartnerSelect').value = state.activeCallPartnerId;
+        updateCallPartnerUI();
+        switchTab('video');
+        showToast(`${state.users[state.activeCallPartnerId].handle} के साथ 1-on-1 मास्क्ड वीडियो कॉल शुरू हो गई!`, '📹');
+      });
+
+      // Call Partner Selector in Video View
+      function updateCallPartnerUI() {
+        const partner = state.users[state.activeCallPartnerId] || state.users.u_owl;
+        const mask = MASK_META[partner.mask] || MASK_META.owl;
+        document.getElementById('remotePartnerBadgeIcon').textContent = mask.emoji;
+        document.getElementById('remotePartnerName').textContent = partner.handle;
+        state.mutualRevealActive = false;
+        state.remoteMisbehaving = false;
+        document.getElementById('remoteMaskStatusText').textContent = '🎭 3D Mask Active (असली चेहरा छुपा है)';
+      }
+
+      document.getElementById('callPartnerSelect').addEventListener('change', (e) => {
+        state.activeCallPartnerId = e.target.value;
+        updateCallPartnerUI();
+      });
+
+      // Call Mask Switcher Buttons
+      document.querySelectorAll('.call-mask-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.myMask = btn.getAttribute('data-callmask');
+          document.getElementById('globalMaskSelect').value = state.myMask;
+          const meta = MASK_META[state.myMask];
+          document.getElementById('myHeaderMaskIcon').textContent = meta.emoji;
+          document.getElementById('sidebarMaskPreview').textContent = meta.emoji;
+
+          document.querySelectorAll('.call-mask-btn').forEach((b) => {
+            b.className = 'call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700';
+          });
+          btn.className = 'call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white';
+          showToast(`कॉल के दौरान आपका फेस मास्क '${meta.name}' में बदल गया!`, meta.emoji);
+        });
+      });
+
+      // Toggle Live Webcam with Face Mask
+      document.getElementById('toggleWebcamBtn').addEventListener('click', async () => {
+        const videoEl = document.getElementById('HiddenWebcamVideo');
+        const btn = document.getElementById('toggleWebcamBtn');
+        const statusTxt = document.getElementById('localCameraSourceText');
+
+        if (state.usingLiveWebcam) {
+          if (state.webcamStream) {
+            state.webcamStream.getTracks().forEach((t) => t.stop());
+          }
+          state.usingLiveWebcam = false;
+          btn.textContent = '📷 असली वेबकैम ऑन करें (With Mask)';
+          statusTxt.textContent = '🎭 सिम्युलेटेड फेस-हाइड कैमरा चालू है';
+          showToast('वेबकैम बंद कर दिया गया; सिम्युलेटेड अवतार मोड चालू है।', '🔒');
+          return;
+        }
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          videoEl.srcObject = stream;
+          state.webcamStream = stream;
+          state.usingLiveWebcam = true;
+          btn.textContent = '⏹️ वेबकैम बंद करें';
+          statusTxt.textContent = '🟢 Live Webcam + 3D Face Mask + Background Blur';
+          showToast('आपका वेबकैम चालू है, लेकिन बैकग्राउंड ब्लर और 3D मास्क के कारण आपका असली चेहरा पूरी तरह छुपा हुआ है!', '🎭');
+        } catch (err) {
+          showToast('ब्राउज़र में कैमरा परमिशन नहीं मिली — स्मार्ट सिम्युलेटेड कैमरा मोड चल रहा है!', 'ℹ️');
+        }
+      });
+
+      // Toggle Voice Modulator
+      document.getElementById('toggleVoiceModBtn').addEventListener('click', () => {
+        state.voiceModulatorOn = !state.voiceModulatorOn;
+        document.getElementById('voiceModStatus').textContent = state.voiceModulatorOn ? 'ON (Deep Anonymous Pitch)' : 'OFF';
+        showToast(state.voiceModulatorOn ? 'वॉइस पिच चेंजर चालू हो गया!' : 'सामान्य आवाज़ मोड चालू।', '🎙️');
+      });
+
+      // Mutual Face Reveal Toggle
+      document.getElementById('mutualRevealBtn').addEventListener('click', () => {
+        state.mutualRevealActive = !state.mutualRevealActive;
+        const partner = state.users[state.activeCallPartnerId];
+        if (state.mutualRevealActive) {
+          document.getElementById('remoteMaskStatusText').textContent = '🔓 Mutual Consent: दोनों की सहमति से फेस अनलॉक है';
+          showToast(`दोनों दोस्तों (${partner.handle} और आप) की सहमति से म्युचुअल फेस रिवील ऑन किया गया!`, '🤝');
+        } else {
+          document.getElementById('remoteMaskStatusText').textContent = '🎭 3D Mask Active (असली चेहरा छुपा है)';
+          showToast('फेस मास्क वापस लगा दिया गया है! आपका चेहरा फिर से हाइड है।', '🎭');
+        }
+      });
+
+      // Simulate Misbehavior Button
+      document.getElementById('simulateMisbehaviorBtn').addEventListener('click', () => {
+        state.remoteMisbehaving = !state.remoteMisbehaving;
+        if (state.remoteMisbehaving) {
+          showToast('डेमो: सामने वाला यूज़र अभद्र व्यवहार कर रहा है! अब "अभद्रता की रिपोर्ट करें" बटन दबाकर 60s का सबूत एडमिन को भेजें।', '🚨');
+        }
+      });
+
+      // Report Abuse Modal Controls
+      const reportModal = document.getElementById('reportAbuseModal');
+      document.getElementById('openReportModalBtn').addEventListener('click', () => {
+        reportModal.classList.remove('hidden');
+      });
+      document.getElementById('closeReportModalBtn').addEventListener('click', () => {
+        reportModal.classList.add('hidden');
+      });
+      document.getElementById('cancelReportBtn').addEventListener('click', () => {
+        reportModal.classList.add('hidden');
+      });
+
+      document.getElementById('submitReportBtn').addEventListener('click', () => {
+        const reason = document.getElementById('reportReasonSelect').value;
+        const notes = document.getElementById('reportNotesInput').value.trim() || 'कॉल के दौरान अभद्र व्यवहार किया गया।';
+        const accused = state.users[state.activeCallPartnerId];
+
+        const newReportId = 'REP-' + Math.floor(1000 + Math.random() * 9000);
+        accused.kycUnlocked = true; // Automatically unlock KYC for Admin upon report
+
+        const newRepObj = {
+          id: newReportId,
+          accusedId: accused.id,
+          reporterHandle: '@ShadowFox_99 (You)',
+          reason,
+          notes,
+          bufferDuration: `60 सेकंड (RAM Buffer 00:00 - 00:${String(state.rollingBufferSeconds).padStart(2, '0')})`,
+          timestamp: 'अभी-अभी',
+          status: 'pending_review',
+          autoDeleteDays: 30
+        };
+        state.abuseReports.unshift(newRepObj);
+        syncReportToCloud(newRepObj);
+
+        state.auditLogs.unshift({
+          time: 'अभी',
+          text: `Report #${newReportId}: @ShadowFox_99 ने ${accused.handle} की शिकायत की। अंतिम 60 सेकंड की रिकॉर्डिंग और आरोपी का असली चेहरा (${accused.realName}) एडमिन पैनल में अनलॉक किया गया।`
+        });
+
+        document.getElementById('reportNotesInput').value = '';
+        reportModal.classList.add('hidden');
+        state.remoteMisbehaving = false;
+        renderAdminPanel();
+        switchTab('admin');
+        showToast(`रिपोर्ट #${newReportId} और पिछले 60 सेकंड का वीडियो सबूत एडमिन पैनल में भेज दिया गया!`, '🛡️');
+      });
+
+      // Admin Panel Actions (Unlock KYC Face & Permanent Ban)
+      document.getElementById('adminReportsContainer').addEventListener('click', (e) => {
+        const banBtn = e.target.closest('.admin-ban-btn');
+        if (!banBtn) return;
+        const uid = banBtn.getAttribute('data-ban-user');
+        const user = state.users[uid];
+        if (user) {
+          user.banned = true;
+          state.auditLogs.unshift({
+            time: 'अभी',
+            text: `Admin Action: सबूत की जांच के बाद ${user.handle} (${user.realName}) का अकाउंट और डिवाइस फिंगरप्रिंट हमेशा के लिए बैन कर दिया गया।`
+          });
+          renderAdminPanel();
+          renderFeed();
+          showToast(`${user.handle} (${user.realName}) को डिवाइस आईडी और फेस के साथ परमानेंट बैन कर दिया गया!`, '🔨');
+        }
+      });
+
+      document.getElementById('adminKycVaultList').addEventListener('click', (e) => {
+        const unlockBtn = e.target.closest('.unlock-kyc-btn');
+        if (!unlockBtn) return;
+        const uid = unlockBtn.getAttribute('data-unlock-kyc');
+        const user = state.users[uid];
+        if (user) {
+          user.kycUnlocked = true;
+          state.auditLogs.unshift({
+            time: 'अभी',
+            text: `Admin KYC Access: सुरक्षा जांच के लिए एडमिन ने ${user.handle} का असली चेहरा (${user.realName}) अनलॉक किया।`
+          });
+          renderAdminPanel();
+          showToast(`एडमिन पैनल में ${user.handle} का असली नाम और चेहरा अनलॉक हो गया!`, '🔓');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
