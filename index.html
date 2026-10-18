@@ -3,26 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeilChat — Face-Hidden Social Media & Personal Video Call App</title>
+  <title>Cockroach Chat (कॉकरोच चैट) — Cockroach Janta Party (CJP) Official Social Media</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- Google Firebase SDKs (Compat v9) for 100% Free Netlify + Cloud Firestore Multi-Device Sync -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
-      background-color: #0b0f19;
-      color: #f1f5f9;
+      background: radial-gradient(circle at 10% 10%, #1e1035 0%, #0b0f19 45%, #090d16 100%);
+      color: #f8fafc;
       overflow-x: hidden;
     }
     .glass-card {
-      background: rgba(17, 24, 39, 0.82);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(99, 102, 241, 0.22);
+      background: rgba(18, 24, 42, 0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(236, 72, 153, 0.24);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .insta-gradient {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+    .fb-gradient {
+      background: linear-gradient(135deg, #1877F2 0%, #6366f1 50%, #a855f7 100%);
+    }
+    .story-ring {
+      padding: 3px;
+      background: linear-gradient(45deg, #facc15, #f97316, #ef4444, #ec4899, #8b5cf6, #3b82f6);
+      border-radius: 9999px;
     }
     .neon-border {
       box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
@@ -47,18 +55,15 @@
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <!-- Brand -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c-4.97 0-9 3.582-9 8 0 2.12.93 4.045 2.45 5.477.31.292.55.69.55 1.123v1.9a1.5 1.5 0 002.25 1.3l1.79-1.033c.62-.358 1.34-.517 2.05-.452.3.028.6.085.91.085 4.97 0 9-3.582 9-8s-4.03-8-9-8z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 10h.01M15 10h.01M9.5 14.5s1 1 2.5 1 2.5-1 2.5-1" />
-          </svg>
+        <div class="w-11 h-11 rounded-2xl insta-gradient flex items-center justify-center shadow-lg shadow-pink-500/30 text-2xl border border-white/30">
+          🪳
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300 bg-clip-text text-transparent">VeilChat</h1>
-            <span class="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">100% Face-Hidden</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-amber-300 via-pink-400 to-indigo-400 bg-clip-text text-transparent">Cockroach Chat (कॉकरोच चैट)</h1>
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full insta-gradient text-white shadow">🪳 Cockroach Janta Party (CJP)</span>
           </div>
-          <p class="text-xs text-slate-400">बेझिझक मन की बात कहें • मास्क्ड पर्सनल वीडियो कॉल • सुरक्षित दोस्ती</p>
+          <p class="text-xs text-pink-200/80">कॉकरोच जनता पार्टी (CJP) के लोगों को समर्पित • यहाँ हर चेहरा सिर्फ कॉकरोच मास्क (🪳) से हाइड होता है</p>
         </div>
       </div>
 
@@ -80,9 +85,9 @@
 
       <!-- Current Masked User Profile Pill -->
       <div class="hidden md:flex items-center gap-2.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
-        <div id="myHeaderMaskIcon" class="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-base">🦊</div>
+        <div id="myHeaderMaskIcon" class="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-base">🪳</div>
         <div class="text-xs">
-          <div class="font-semibold text-slate-200" id="myHandleDisplay">@ShadowFox_99</div>
+          <div class="font-semibold text-slate-200" id="myHandleDisplay">@RoachBoss_CJP</div>
           <div class="text-[11px] text-emerald-400 flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> फेस मास्क ऑन (KYC Verified)
           </div>
@@ -104,22 +109,23 @@
             <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Real Face Hidden</span>
           </div>
           <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-900/80 border border-slate-800 mb-4">
-            <div id="sidebarMaskPreview" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600/40 to-purple-600/40 border border-indigo-400/40 flex items-center justify-center text-3xl">
-              🦊
+            <div id="sidebarMaskPreview" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600/40 to-orange-600/40 border border-amber-400/40 flex items-center justify-center text-3xl">
+              🪳
             </div>
             <div>
-              <div class="font-bold text-base text-white">@ShadowFox_99</div>
+              <div class="font-bold text-base text-white">@RoachBoss_CJP</div>
               <p class="text-xs text-slate-400">आपका असली चेहरा किसी यूज़र को नहीं दिखता।</p>
             </div>
           </div>
 
           <label for="globalMaskSelect" class="block text-xs font-medium text-slate-300 mb-1.5">अपना डिफ़ॉल्ट 3D फेस मास्क चुनें:</label>
-          <select id="globalMaskSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-            <option value="fox">🦊 निऑन कित्सुने (Neon Fox Mask)</option>
-            <option value="owl">🦉 एस्ट्रल आउल (Astral Owl Mask)</option>
-            <option value="cyber">🤖 साइबर वाइज़र (Cyber Punk Visor)</option>
-            <option value="lotus">🪷 ज़ेन लोटस (Zen Calm Mask)</option>
-            <option value="pixel">🟪 हैवी पिक्सेल ब्लर (Deep Pixel Blur)</option>
+          <select id="globalMaskSelect" class="w-full bg-slate-900 border border-amber-500/50 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
+            <option value="roach">🪳 CJP ऑफिशियल कॉकरोच मास्क (Cockroach Janta Party)</option>
+            <option value="fox">🪳👑 किंग कॉकरोच क्राउन मास्क (Royal Roach Boss)</option>
+            <option value="owl">🪳🕶️ स्वैग कॉकरोच चश्मा मास्क (Swag Roach Mask)</option>
+            <option value="cyber">🪳⚡ साइबर निऑन कॉकरोच मास्क (Neon Cyber Roach)</option>
+            <option value="lotus">🪳🔥 गोल्डन योद्धा कॉकरोच मास्क (Golden CJP Warrior)</option>
+            <option value="pixel">🪳🟪 कॉकरोच हैवी पिक्सेल शील्ड (Roach Pixel Shield)</option>
           </select>
 
           <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-2 text-xs text-slate-400">
@@ -159,7 +165,7 @@
           <div class="space-y-1.5">
             <label for="myInviteLinkInput" class="block text-[11px] font-medium text-slate-300">आपका पर्सनल इनवाइट लिंक:</label>
             <div class="flex gap-1.5">
-              <input id="myInviteLinkInput" type="text" readonly value="https://veilchat.live/u/ShadowFox_99?invite=VC99" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-indigo-200 font-mono focus:outline-none" />
+              <input id="myInviteLinkInput" type="text" readonly value="https://amanroy030892-netizen.github.io/vichat/?app=CockroachChat&u=RoachBoss_CJP" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-indigo-200 font-mono focus:outline-none" />
               <button id="copyInviteLinkBtn" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shrink-0 transition-all">
                 📋 कॉपी करें
               </button>
@@ -188,8 +194,34 @@
         </div>
       </aside>
 
-      <!-- Center & Right Column: Create Vent Post & Feed List -->
+      <!-- Center & Right Column: Masked Stories, Create Post & Colorful Feed List -->
       <div class="lg:col-span-8 space-y-5">
+
+        <!-- Cockroach Janta Party (CJP) Dedicated Hero Strip -->
+        <div class="rounded-2xl p-4 insta-gradient text-white shadow-xl flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur flex items-center justify-center text-3xl border border-white/40 shadow-lg">🪳</div>
+            <div>
+              <div class="text-xs font-extrabold uppercase tracking-wider bg-black/40 px-2.5 py-0.5 rounded-full inline-block mb-0.5">🪳 कॉकरोच जनता पार्टी (Cockroach Janta Party) को समर्पित</div>
+              <h2 class="text-sm sm:text-base font-bold">यहाँ हर चेहरा सिर्फ कॉकरोच मास्क (🪳) से छुपता है — फोटो, पोस्ट या वीडियो कॉल में कभी चेहरा नहीं आता!</h2>
+            </div>
+          </div>
+          <button id="shuffleFeedColorsBtn" type="button" class="px-3.5 py-2 rounded-xl bg-white text-pink-700 hover:bg-pink-50 text-xs font-extrabold shadow transition-all shrink-0">
+            🎨 CJP कलर बदलें
+          </button>
+        </div>
+
+        <!-- Instagram / Facebook Style Masked Stories Bar -->
+        <div class="glass-card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs sm:text-sm font-bold text-pink-300 flex items-center gap-1.5">
+              ✨ रंगीन मास्क्ड स्टोरीज़ (Instagram/Facebook Stories • 🚫 Zero Face)
+            </h3>
+            <span class="text-[11px] text-emerald-300 font-semibold">🔒 100% Avatars & Masks Only</span>
+          </div>
+          <div id="maskedStoriesBar" class="flex items-center gap-4 overflow-x-auto pb-2"></div>
+        </div>
+
         <!-- Create Anonymous Post Box -->
         <div class="glass-card rounded-2xl p-5">
           <h2 class="text-base font-semibold text-white mb-1">अपने मन की बात लिखें (चेहरा पूरी तरह हाइड रहेगा)</h2>
@@ -197,12 +229,21 @@
           
           <div class="space-y-3">
             <div class="flex flex-wrap items-center gap-2">
-              <label for="postMoodSelect" class="text-xs text-slate-300 font-medium">आपका मूड:</label>
-              <select id="postMoodSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-indigo-200 focus:outline-none focus:border-indigo-500">
+              <label for="postMoodSelect" class="text-xs text-pink-200 font-semibold">मूड चुनें:</label>
+              <select id="postMoodSelect" class="bg-slate-900 border border-pink-500/40 rounded-xl px-3 py-1.5 text-xs text-pink-200 focus:outline-none focus:border-pink-500">
                 <option value="मन उदास है 😔">मन उदास है 😔 (Feeling Low)</option>
                 <option value="अकेलापन महसूस हो रहा है 🌙">अकेलापन महसूस हो रहा है 🌙 (Lonely)</option>
                 <option value="दोस्त चाहिए 🤝">सच्चा दोस्त चाहिए 🤝 (Need a Friend)</option>
                 <option value="तनाव / स्ट्रेस 💭">तनाव / करियर की चिंता 💭 (Stressed)</option>
+              </select>
+
+              <label for="postVisualThemeSelect" class="text-xs text-indigo-200 font-semibold ml-1">पोस्ट का रंगीन कार्ड:</label>
+              <select id="postVisualThemeSelect" class="bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-1.5 text-xs text-indigo-200 focus:outline-none focus:border-indigo-500">
+                <option value="insta_sunset">🌅 इंस्टाग्राम सनसेट निऑन (Insta Sunset)</option>
+                <option value="fb_royal">💙 फेसबुक रॉयल ब्लू (FB Royal Glow)</option>
+                <option value="cyber_night">🌌 साइबर पर्पल नाइट (Cyber Neon)</option>
+                <option value="rain_chai">🌧️ बारिश और सुकून (Monsoon Emerald)</option>
+                <option value="music_vibe">🎸 मिडनाइट म्यूजिक वाइब (Crimson Gold)</option>
               </select>
             </div>
 
@@ -243,7 +284,7 @@
         <!-- Chat Header -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-800">
           <div class="flex items-center gap-3">
-            <div id="activeChatAvatar" class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-2xl">🦉</div>
+            <div id="activeChatAvatar" class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl">🪳</div>
             <div>
               <div class="flex items-center gap-2">
                 <h3 id="activeChatHandle" class="font-bold text-white text-base">@NightOwl_21</h3>
@@ -297,9 +338,9 @@
         <div class="flex flex-wrap items-center gap-2">
           <label for="callPartnerSelect" class="text-xs text-slate-400">किससे कॉल कर रहे हैं:</label>
           <select id="callPartnerSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-medium">
-            <option value="u_owl">🦉 @NightOwl_21 (Personal Friend)</option>
-            <option value="u_lotus">🪷 @CalmSoul_07 (Personal Friend)</option>
-            <option value="u_cyber">🤖 @RogueGlitch_404 (Stranger / Test Abuser)</option>
+            <option value="u_owl">🪳 @CJP_Leader_21 (CJP Friend)</option>
+            <option value="u_lotus">🪳👑 @RoachQueen_07 (CJP Friend)</option>
+            <option value="u_cyber">🪳⚡ @RogueRoach_404 (Stranger / Test Abuser)</option>
           </select>
         </div>
       </div>
@@ -310,7 +351,7 @@
         <div class="glass-card rounded-2xl p-4 relative overflow-hidden flex flex-col">
           <div class="flex items-center justify-between mb-2.5 z-10">
             <div class="flex items-center gap-2">
-              <span id="remotePartnerBadgeIcon" class="text-xl">🦉</span>
+              <span id="remotePartnerBadgeIcon" class="text-xl">🪳</span>
               <div>
                 <h3 id="remotePartnerName" class="text-sm font-bold text-white">@NightOwl_21</h3>
                 <span id="remoteMaskStatusText" class="text-[11px] text-indigo-300">🎭 3D Mask Active (असली चेहरा छुपा है)</span>
@@ -341,9 +382,9 @@
         <div class="glass-card rounded-2xl p-4 relative overflow-hidden flex flex-col">
           <div class="flex items-center justify-between mb-2.5 z-10">
             <div class="flex items-center gap-2">
-              <span class="text-xl">🦊</span>
+              <span class="text-xl">🪳</span>
               <div>
-                <h3 class="text-sm font-bold text-white">आप (@ShadowFox_99)</h3>
+                <h3 class="text-sm font-bold text-white">आप (@RoachBoss_CJP)</h3>
                 <span id="localCameraSourceText" class="text-[11px] text-emerald-400">🎭 फेस-हाइड फिल्टर चालू है</span>
               </div>
             </div>
@@ -367,14 +408,15 @@
 
       <!-- Call Control Bar -->
       <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
-        <!-- Mask Switcher During Call -->
+        <!-- Mask Switcher During Call (100% Cockroach Janta Party Masks) -->
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-medium text-slate-300">कॉल में अपना मास्क बदलें:</span>
-          <button type="button" data-callmask="fox" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white">🦊 Fox</button>
-          <button type="button" data-callmask="owl" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🦉 Owl</button>
-          <button type="button" data-callmask="cyber" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🤖 Cyber</button>
-          <button type="button" data-callmask="lotus" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪷 Lotus</button>
-          <button type="button" data-callmask="pixel" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🟪 Pixel Blur</button>
+          <span class="text-xs font-medium text-amber-300">कॉल में अपना कॉकरोच मास्क बदलें:</span>
+          <button type="button" data-callmask="roach" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white">🪳 CJP Roach</button>
+          <button type="button" data-callmask="fox" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪳👑 King Roach</button>
+          <button type="button" data-callmask="owl" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪳🕶️ Swag Roach</button>
+          <button type="button" data-callmask="cyber" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪳⚡ Neon Roach</button>
+          <button type="button" data-callmask="lotus" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪳🔥 Gold Roach</button>
+          <button type="button" data-callmask="pixel" class="call-mask-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">🪳🟪 Pixel Roach</button>
         </div>
 
         <!-- Action Buttons: Voice Pitch, Mutual Face Reveal, Report 60s Clip, End Call -->
@@ -383,8 +425,8 @@
             🎙️ वॉइस चेंजर: <span id="voiceModStatus">OFF</span>
           </button>
 
-          <button id="mutualRevealBtn" type="button" class="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-xs font-semibold border border-purple-500/40 transition-all">
-            🤝 सहमति से फेस दिखाएं (Mutual Unmask)
+          <button id="mutualRevealBtn" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 text-xs font-bold border border-emerald-500/40 transition-all">
+            🔒 100% फेस-हाइड लॉक (No Face Allowed Ever)
           </button>
 
           <button id="openReportModalBtn" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-rose-600/30 flex items-center gap-1.5 transition-all">
@@ -458,6 +500,39 @@
 
   </main>
 
+  <!-- ==================== MODAL: MASKED STORY VIEWER (100% NO FACE) ==================== -->
+  <div id="storyViewerModal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="storyModalCard" class="rounded-3xl max-w-sm w-full p-6 insta-gradient text-white shadow-2xl border-2 border-white/30 relative overflow-hidden">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <div id="storyModalEmoji" class="w-11 h-11 rounded-full bg-black/40 border border-white/40 flex items-center justify-center text-2xl">🪳</div>
+          <div>
+            <div id="storyModalHandle" class="font-extrabold text-sm">@NightOwl_21</div>
+            <div class="text-[11px] text-white/80">🚫 100% Face-Hidden Story</div>
+          </div>
+        </div>
+        <button id="closeStoryModalBtn" type="button" class="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-sm font-bold">✕</button>
+      </div>
+
+      <div class="my-6 py-10 px-4 rounded-2xl bg-black/30 backdrop-blur-sm border border-white/20 text-center space-y-3">
+        <div id="storyModalBigArt" class="text-6xl">🎭✨</div>
+        <p id="storyModalText" class="text-base font-bold leading-relaxed"></p>
+        <div class="inline-block px-3 py-1 rounded-full bg-emerald-500/30 border border-emerald-300/40 text-[11px] font-semibold">
+          🛡️ चेहरा पूरी तरह छुपा हुआ है (Zero Face Policy)
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2">
+        <button id="storySendHeartBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs transition-all">
+          ❤️ स्टोरी लाइक करें
+        </button>
+        <button id="storyConnectBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-white text-pink-700 hover:bg-pink-50 font-extrabold text-xs transition-all">
+          💬 दोस्त बनें और चैट करें
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== MODAL: REPORT ABUSE & UPLOAD 60s BUFFER ==================== -->
   <div id="reportAbuseModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-rose-500/40 shadow-2xl">
@@ -509,94 +584,65 @@
   </div>
 
   <script>
-    // ==================== GOOGLE FIREBASE CLOUD FIRESTORE (ISOLATED vc_* COLLECTIONS) ====================
-    const vcFirebaseConfig = {
-      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
-      authDomain: "safarsaathi-1de86.firebaseapp.com",
-      projectId: "safarsaathi-1de86",
-      storageBucket: "safarsaathi-1de86.firebasestorage.app",
-      messagingSenderId: "560392119536",
-      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
-      measurementId: "G-0PB4K9PWVD"
-    };
-    let vcDb = null;
-    try {
-      if (typeof firebase !== 'undefined') {
-        const app = !firebase.apps.length ? firebase.initializeApp(vcFirebaseConfig) : firebase.app();
-        vcDb = firebase.firestore(app);
-        console.log('VeilChat Cloud Firestore Connected (Isolated vc_* collections)');
-      }
-    } catch (err) {
-      console.warn('Firestore fallback to local mode:', err);
-    }
-
-    function syncPostToCloud(postObj) {
-      if (!vcDb) return;
-      try {
-        vcDb.collection('vc_posts').doc(postObj.id).set(postObj, { merge: true });
-      } catch (e) {}
-    }
-
-    function syncReportToCloud(reportObj) {
-      if (!vcDb) return;
-      try {
-        vcDb.collection('vc_reports').doc(reportObj.id).set(reportObj, { merge: true });
-      } catch (e) {}
-    }
-
-    function startCloudListeners() {
-      if (!vcDb) return;
-      try {
-        vcDb.collection('vc_posts').limit(50).onSnapshot((snap) => {
-          snap.docChanges().forEach((change) => {
-            const data = change.doc.data();
-            if (data && data.id) {
-              const idx = state.posts.findIndex((p) => p.id === data.id);
-              if (idx === -1) {
-                state.posts.unshift(data);
-              } else {
-                state.posts[idx] = data;
-              }
-            }
-          });
-          if (state.activeTab === 'feed') renderFeed();
-        });
-
-        vcDb.collection('vc_reports').limit(50).onSnapshot((snap) => {
-          snap.docChanges().forEach((change) => {
-            const data = change.doc.data();
-            if (data && data.id) {
-              const idx = state.abuseReports.findIndex((r) => r.id === data.id);
-              if (idx === -1) {
-                state.abuseReports.unshift(data);
-              } else {
-                state.abuseReports[idx] = data;
-              }
-            }
-          });
-          if (state.activeTab === 'admin') renderAdminPanel();
-        });
-      } catch (e) {}
-    }
-
-    // ==================== APPLICATION STATE ====================
+    // ==================== APPLICATION STATE (100% COCKROACH JANTA PARTY EDITION) ====================
     const MASK_META = {
-      fox:   { emoji: '🦊', name: 'Neon Fox Mask', color: '#6366f1', accent: '#a855f7' },
-      owl:   { emoji: '🦉', name: 'Astral Owl Mask', color: '#0ea5e9', accent: '#38bdf8' },
-      cyber: { emoji: '🤖', name: 'Cyber Punk Visor', color: '#10b981', accent: '#34d399' },
-      lotus: { emoji: '🪷', name: 'Zen Calm Mask', color: '#ec4899', accent: '#f472b6' },
-      pixel: { emoji: '🟪', name: 'Deep Pixel Blur', color: '#8b5cf6', accent: '#c084fc' }
+      roach:     { emoji: '🪳', crown: 'CJP', name: 'CJP Official Cockroach Mask', color: '#ea580c', accent: '#facc15' },
+      fox:       { emoji: '🪳', crown: '👑',  name: 'King Cockroach Crown Mask', color: '#d97706', accent: '#fde047' },
+      owl:       { emoji: '🪳', crown: '🕶️', name: 'Swag Cockroach Chashma Mask', color: '#ec4899', accent: '#f43f5e' },
+      cyber:     { emoji: '🪳', crown: '⚡',  name: 'Cyber Neon Cockroach Mask', color: '#6366f1', accent: '#38bdf8' },
+      lotus:     { emoji: '🪳', crown: '🔥',  name: 'Golden CJP Warrior Roach Mask', color: '#10b981', accent: '#34d399' },
+      pixel:     { emoji: '🪳', crown: '🟪',  name: 'Cockroach Pixel Shield Mask', color: '#8b5cf6', accent: '#c084fc' },
+      butterfly: { emoji: '🪳', crown: '🎸',  name: 'Rockstar Cockroach Mask', color: '#f43f5e', accent: '#fb7185' },
+      lion:      { emoji: '🪳', crown: '🦁',  name: 'Sher Cockroach Janta Mask', color: '#f59e0b', accent: '#fbbf24' },
+      moon:      { emoji: '🪳', crown: '🌙',  name: 'Midnight Cockroach Mask', color: '#3b82f6', accent: '#60a5fa' }
     };
+
+    const VISUAL_THEMES = {
+      insta_sunset: {
+        bg: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+        badge: '🪳 कॉकरोच जनता पार्टी (CJP) • 🚫 No Face',
+        art: '🪳👑🔥'
+      },
+      fb_royal: {
+        bg: 'linear-gradient(135deg, #1877F2 0%, #4f46e5 55%, #7c3aed 100%)',
+        badge: '🪳 CJP Royal Squad • 🚫 No Face',
+        art: '🪳🕶️⚡'
+      },
+      cyber_night: {
+        bg: 'linear-gradient(135deg, #0f172a 0%, #6d28d9 50%, #ec4899 100%)',
+        badge: '🪳 CJP Night Army • 🚫 No Face',
+        art: '🪳🎧🌌'
+      },
+      rain_chai: {
+        bg: 'linear-gradient(135deg, #064e3b 0%, #0d9488 55%, #2563eb 100%)',
+        badge: '🪳 CJP Chai & Adda • 🚫 No Face',
+        art: '🪳☕🌧️'
+      },
+      music_vibe: {
+        bg: 'linear-gradient(135deg, #7f1d1d 0%, #db2777 50%, #f59e0b 100%)',
+        badge: '🪳 CJP Music Jam • 🚫 No Face',
+        art: '🪳🎸🎵'
+      }
+    };
+
+    const MASKED_STORIES = [
+      { id: 'st_1', userId: 'u_owl', handle: '@CJP_Leader_21', mask: 'roach', art: '🪳👑🔥', title: 'CJP जिंदाबाद!', text: 'कॉकरोच जनता पार्टी का एक ही नियम — यहाँ चेहरा नहीं, सिर्फ कॉकरोच मास्क चलेगा! 🪳🔥' },
+      { id: 'st_2', userId: 'u_lotus', handle: '@RoachQueen_07', mask: 'fox', art: '🪳👑✨', title: 'CJP स्वैग', text: 'ना कोई फिल्टर का टेंशन, ना चेहरा दिखाने की ज़रूरत! कॉकरोच मास्क लगाओ और बिंदास बात करो 🪳💖' },
+      { id: 'st_3', userId: 'u_guitar', handle: '@GuitarRoach_88', mask: 'butterfly', art: '🪳🎸🎶', title: 'CJP नाइट जैम', text: 'कॉकरोच मास्क पहनकर गिटार बजा रहा हूँ, हमारी कॉकरोच जनता पार्टी में सबका स्वागत है! 🪳🎸' },
+      { id: 'st_4', userId: 'u_poet', handle: '@ShayarRoach_11', mask: 'owl', art: '🪳🕶️📖', title: 'CJP शायरी', text: 'दुनिया देखती है चेहरा, पर कॉकरोच जनता पार्टी देखती है दिल! आओ बिना नकाब उतारे दोस्ती करें 🪳🤝' },
+      { id: 'st_5', userId: 'u_moon', handle: '@NightRoach_05', mask: 'moon', art: '🪳🌙🚀', title: 'रात के कॉकरोच', text: 'रात के 2 बजे जागने वाले सभी कॉकरोच जनता पार्टी के सदस्यों को सलाम! 🪳🌙' },
+      { id: 'st_6', userId: 'u_cyber', handle: '@CyberRoach_90', mask: 'cyber', art: '🪳⚡🎮', title: 'CJP गेमिंग', text: 'कॉकरोच मास्क ऑन है, कोई चेहरा नहीं देख सकता — आओ लाइव कॉल पर मस्ती करें! 🪳🎮' }
+    ];
 
     const state = {
       activeTab: 'feed',
-      myMask: 'fox',
+      myMask: 'roach',
       moodFilter: 'ALL',
       activeFriendId: 'u_owl',
       activeCallPartnerId: 'u_owl',
       incomingRequests: [
-        { id: 'req_1', userId: 'u_star', handle: '@Starlight_44', mask: 'lotus', note: 'आपके इनवाइट लिंक से जुड़ना चाहते हैं' },
-        { id: 'req_2', userId: 'u_echo', handle: '@SilentEcho_12', mask: 'owl', note: 'पोस्ट फीड से फ्रेंड रिक्वेस्ट भेजी' }
+        { id: 'req_1', userId: 'u_star', handle: '@GoldRoach_44', mask: 'roach', note: 'कॉकरोच जनता पार्टी (CJP) लिंक से जुड़ना चाहते हैं' },
+        { id: 'req_2', userId: 'u_echo', handle: '@SwagRoach_12', mask: 'owl', note: 'CJP पोस्ट फीड से फ्रेंड रिक्वेस्ट भेजी' }
       ],
       sentRequests: [],
       voiceModulatorOn: false,
@@ -609,33 +655,69 @@
       users: {
         u_owl: {
           id: 'u_owl',
-          handle: '@NightOwl_21',
-          mask: 'owl',
-          realName: 'आर्यन शर्मा (Aryan Sharma)',
+          handle: '@CJP_Leader_21',
+          mask: 'roach',
+          realName: 'KYC-ID #AS-8821 (Cockroach Masked)',
           phone: '+91 98XXXXXX42',
-          city: 'Jaipur, RJ',
+          city: 'Guwahati, Assam',
           kycUnlocked: false,
           banned: false,
           faceColor: '#f59e0b',
-          relationNote: "आपके पोस्ट पर '🫂 गले लगाएं' रिएक्ट करके जुड़े"
+          relationNote: "कॉकरोच जनता पार्टी (CJP) के पोस्ट से जुड़े"
         },
         u_lotus: {
           id: 'u_lotus',
-          handle: '@CalmSoul_07',
-          mask: 'lotus',
-          realName: 'नेहा वर्मा (Neha Verma)',
+          handle: '@RoachQueen_07',
+          mask: 'fox',
+          realName: 'KYC-ID #MP-4419 (Cockroach Masked)',
           phone: '+91 97XXXXXX19',
           city: 'Indore, MP',
           kycUnlocked: false,
           banned: false,
           faceColor: '#10b981',
-          relationNote: "आपने इनके पोस्ट पर '💙 साथ हैं' रिएक्ट किया"
+          relationNote: "CJP स्क्वाड से जुड़ीं मास्क्ड दोस्त"
+        },
+        u_guitar: {
+          id: 'u_guitar',
+          handle: '@GuitarRoach_88',
+          mask: 'butterfly',
+          realName: 'KYC-ID #MH-3310 (Cockroach Masked)',
+          phone: '+91 96XXXXXX77',
+          city: 'Mumbai, MH',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#ec4899',
+          relationNote: "CJP म्यूजिक पोस्ट से जुड़े दोस्त"
+        },
+        u_poet: {
+          id: 'u_poet',
+          handle: '@ShayarRoach_11',
+          mask: 'owl',
+          realName: 'KYC-ID #RJ-7720 (Cockroach Masked)',
+          phone: '+91 95XXXXXX11',
+          city: 'Jaipur, RJ',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#a855f7',
+          relationNote: "CJP शायरी और स्टोरी से जुड़े दोस्त"
+        },
+        u_moon: {
+          id: 'u_moon',
+          handle: '@NightRoach_05',
+          mask: 'moon',
+          realName: 'KYC-ID #KA-5501 (Cockroach Masked)',
+          phone: '+91 94XXXXXX05',
+          city: 'Bengaluru, KA',
+          kycUnlocked: false,
+          banned: false,
+          faceColor: '#3b82f6',
+          relationNote: "लेट-नाइट CJP फीड से जुड़े दोस्त"
         },
         u_cyber: {
           id: 'u_cyber',
-          handle: '@RogueGlitch_404',
+          handle: '@RogueRoach_404',
           mask: 'cyber',
-          realName: 'विक्रम राठौड़ (Vikram Rathore)',
+          realName: 'KYC-ID #DL-9041 (Device Flagged)',
           phone: '+91 91XXXXXX88',
           city: 'Delhi NCR',
           kycUnlocked: true,
@@ -649,40 +731,96 @@
         {
           id: 'p1',
           userId: 'u_owl',
-          handle: '@NightOwl_21',
-          mask: 'owl',
-          mood: 'मन उदास है 😔',
-          timeAgo: '12 मिनट पहले',
-          content: 'आज ऑफिस और घर दोनों जगह बहुत अकेलापन महसूस हो रहा है। किसी को अपना चेहरा नहीं दिखाना चाहता, बस कोई ऐसा दोस्त चाहिए जो बिना जज किए 10 मिनट बात कर सके।',
-          reactions: { hug: 14, support: 9, listen: 6 },
+          handle: '@CJP_Leader_21',
+          mask: 'roach',
+          mood: 'दोस्त चाहिए 🤝',
+          visualTheme: 'insta_sunset',
+          captionTitle: 'कॉकरोच जनता पार्टी (CJP) का अपना सोशल मीडिया आ गया! 🪳🔥',
+          timeAgo: '5 मिनट पहले • Guwahati',
+          content: 'भाइयों और बहनों! कॉकरोच जनता पार्टी के ट्रेंड के लिए यह अपना खुद का सोशल मीडिया है। यहाँ किसी का चेहरा नहीं दिखता, हर चेहरे के ऊपर सिर्फ कॉकरोच का मास्क (🪳) रहता है। न कोई शक्ल देखकर जज करेगा, न कोई दिखावा — बस बिंदास दिल की बात करो!',
+          reactions: { hug: 245, support: 189, listen: 94 },
           userReacted: {},
           comments: [
-            { author: '@CalmSoul_07', mask: '🪷', text: 'हिम्मत मत हारो दोस्त, मैं यहाँ हूँ। चैट में मैसेज करो, बात करते हैं!' }
+            { author: '@RoachQueen_07', mask: '🪳', text: 'कॉकरोच जनता पार्टी जिंदाबाद! 🪳👑 यह कॉकरोच मास्क वाला आइडिया सबसे बेस्ट है!' },
+            { author: '@GuitarRoach_88', mask: '🪳', text: 'यहाँ सब बराबर हैं क्योंकि सबके चेहरे पर कॉकरोच मास्क है 🪳🔥' }
           ]
         },
         {
           id: 'p2',
           userId: 'u_lotus',
-          handle: '@CalmSoul_07',
-          mask: 'lotus',
+          handle: '@RoachQueen_07',
+          mask: 'fox',
           mood: 'तनाव / स्ट्रेस 💭',
-          timeAgo: '35 मिनट पहले',
-          content: 'एग्जाम और करियर के प्रेशर से नींद नहीं आ रही। सोशल मीडिया पर सब नकली खुश दिखते हैं, कम से कम यहाँ बिना फेस दिखाए सच बोल सकती हूँ।',
-          reactions: { hug: 22, support: 18, listen: 11 },
+          visualTheme: 'fb_royal',
+          captionTitle: 'कॉकरोच मास्क के पीछे सुकून की बात 🪳👑🌙',
+          timeAgo: '18 मिनट पहले • Indore',
+          content: 'इंस्टाग्राम और फेसबुक पर तो सब नकली शो-ऑफ करते हैं, लेकिन कॉकरोच चैट पर अपना चेहरा कॉकरोच मास्क से छुपाकर हम अपने दिल का सारा स्ट्रेस और अकेलापन बिना किसी डर के शेयर कर सकते हैं। कौन-कौन अभी ऑनलाइन है?',
+          reactions: { hug: 168, support: 142, listen: 76 },
           userReacted: {},
           comments: [
-            { author: '@ShadowFox_99', mask: '🦊', text: 'बिल्कुल सही कहा! जब भी बात करने का मन हो, हम मास्क्ड कॉल कर सकते हैं।' }
+            { author: '@RoachBoss_CJP', mask: '🪳', text: 'पूरी कॉकरोच जनता पार्टी आपके साथ है दोस्त! 🪳💪' },
+            { author: '@ShayarRoach_11', mask: '🪳', text: 'यहाँ कोई जजमेंट नहीं है, सिर्फ सच्चे दोस्त हैं 🪳🌅' }
           ]
         },
         {
           id: 'p3',
-          userId: 'u_cyber',
-          handle: '@RogueGlitch_404',
-          mask: 'cyber',
+          userId: 'u_guitar',
+          handle: '@GuitarRoach_88',
+          mask: 'butterfly',
           mood: 'दोस्त चाहिए 🤝',
-          timeAgo: '1 घंटे पहले',
-          content: 'देर रात जागने वाले लोग हैं क्या यहाँ? गेमिंग और म्यूजिक पर बात करने के लिए नए दोस्त चाहिए।',
-          reactions: { hug: 5, support: 8, listen: 4 },
+          visualTheme: 'music_vibe',
+          captionTitle: 'कॉकरोच मास्क लगाकर लाइव गिटार और गाने 🪳🎸',
+          timeAgo: '42 मिनट पहले • Mumbai',
+          content: 'कैमरे के सामने चेहरा दिखाने में झिझक होती थी, पर अब कॉकरोच जनता पार्टी का मास्क लगाकर रोज़ रात को गाना गाता हूँ और वीडियो कॉल पर नए दोस्तों से बात करता हूँ। आओ चैट में जुड़ें!',
+          reactions: { hug: 134, support: 156, listen: 88 },
+          userReacted: {},
+          comments: [
+            { author: '@NightRoach_05', mask: '🪳', text: 'भाई क्या बात है! अभी कॉकरोच मास्क कॉल पर जुड़ते हैं 🪳🎶' }
+          ]
+        },
+        {
+          id: 'p4',
+          userId: 'u_poet',
+          handle: '@ShayarRoach_11',
+          mask: 'owl',
+          mood: 'मन उदास है 😔',
+          visualTheme: 'rain_chai',
+          captionTitle: 'चाय, बारिश और कॉकरोच जनता पार्टी की महफ़िल 🪳☕🌧️',
+          timeAgo: '1 घंटे पहले • Jaipur',
+          content: 'आज मन थोड़ा उदास था, सोचा अपने CJP परिवार के साथ बात कर लूँ। चेहरे के नकाब से जब रूप छुप जाता है, तब इंसान की असली आवाज़ और जज़्बात समझ आते हैं।',
+          reactions: { hug: 192, support: 148, listen: 83 },
+          userReacted: {},
+          comments: [
+            { author: '@CJP_Leader_21', mask: '🪳', text: 'उदास मत हो भाई, CJP का हर मेंबर तुम्हारे साथ खड़ा है! 🪳🫂' }
+          ]
+        },
+        {
+          id: 'p5',
+          userId: 'u_moon',
+          handle: '@NightRoach_05',
+          mask: 'moon',
+          mood: 'अकेलापन महसूस हो रहा है 🌙',
+          visualTheme: 'cyber_night',
+          captionTitle: 'रात के 2 बजे वाली कॉकरोच गैंग 🪳🌌⚡',
+          timeAgo: '2 घंटे पहले • Bengaluru',
+          content: 'नए शहर में अकेला रहता हूँ। जब भी बोरियत होती है, कॉकरोच चैट खोल लेता हूँ। यहाँ न नाम का पता, न चेहरे का — बस कॉकरोच मास्क लगाओ और दिल खोलकर बात करो!',
+          reactions: { hug: 110, support: 129, listen: 64 },
+          userReacted: {},
+          comments: [
+            { author: '@RoachQueen_07', mask: '🪳', text: 'वेलकम टू कॉकरोच जनता पार्टी! यहाँ कोई अकेला नहीं है 🪳🤝' }
+          ]
+        },
+        {
+          id: 'p6',
+          userId: 'u_cyber',
+          handle: '@RogueRoach_404',
+          mask: 'cyber',
+          mood: 'तनाव / स्ट्रेस 💭',
+          visualTheme: 'insta_sunset',
+          captionTitle: 'ज़िंदगी की भागदौड़ और CJP का सहारा 🪳⚡',
+          timeAgo: '3 घंटे पहले • Delhi',
+          content: 'काम का प्रेशर बहुत ज़्यादा है, पर यहाँ आकर कॉकरोच मास्क के पीछे सब भड़ास निकाल लेता हूँ तो मन हल्का हो जाता है।',
+          reactions: { hug: 75, support: 82, listen: 49 },
           userReacted: {},
           comments: []
         }
@@ -690,7 +828,7 @@
 
       chats: {
         u_owl: [
-          { sender: 'them', text: 'हाय @ShadowFox_99! मेरे पोस्ट पर सपोर्ट करने के लिए शुक्रिया 🙏', time: '4:45 PM' },
+          { sender: 'them', text: 'हाय @RoachBoss_CJP! मेरे पोस्ट पर सपोर्ट करने के लिए शुक्रिया 🙏', time: '4:45 PM' },
           { sender: 'me', text: 'कोई बात नहीं दोस्त! कैसा महसूस कर रहे हो अभी?', time: '4:46 PM' },
           { sender: 'them', text: 'थोड़ा बेहतर। क्या हम फेस-मास्क ऑन रखकर पर्सनल वीडियो कॉल पर बात कर सकते हैं?', time: '4:48 PM' }
         ],
@@ -822,7 +960,30 @@
               ` : `<span class="text-[11px] text-emerald-400 font-medium">आपका पोस्ट</span>`}
             </div>
 
-            <p class="text-sm text-slate-100 leading-relaxed mb-4 bg-slate-900/50 p-3.5 rounded-xl border border-slate-800/60">
+            <!-- Instagram / Facebook Style Colorful Visual Masked Banner (100% Face Hidden) -->
+            <div class="rounded-2xl p-5 mb-3.5 text-white shadow-lg relative overflow-hidden border border-white/15" style="background: ${(VISUAL_THEMES[post.visualTheme] || VISUAL_THEMES.insta_sunset).bg}">
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-sm border border-white/20">
+                  ${(VISUAL_THEMES[post.visualTheme] || VISUAL_THEMES.insta_sunset).badge}
+                </span>
+                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/40 text-emerald-100 border border-emerald-300/40">
+                  🛡️ चेहरा 100% हाइड है
+                </span>
+              </div>
+
+              <div class="py-4 px-3 text-center space-y-2">
+                <div class="inline-flex flex-col items-center justify-center w-24 h-24 rounded-3xl bg-black/45 border-2 border-amber-300/60 shadow-xl">
+                  <span class="text-xs font-extrabold text-amber-300">${maskInfo.crown || 'CJP'}</span>
+                  <span class="text-4xl leading-none">🪳</span>
+                </div>
+                <div class="text-xs font-semibold text-white/90 tracking-wide">${(VISUAL_THEMES[post.visualTheme] || VISUAL_THEMES.insta_sunset).art}</div>
+                <h4 class="text-base sm:text-lg font-extrabold text-white drop-shadow">
+                  ${post.captionTitle || 'दिल की बात — बिना चेहरा दिखाए 🎭'}
+                </h4>
+              </div>
+            </div>
+
+            <p class="text-sm text-slate-100 leading-relaxed mb-4 bg-slate-900/70 p-3.5 rounded-xl border border-pink-500/20">
               "${post.content}"
             </p>
 
@@ -911,79 +1072,87 @@
     let tickAngle = 0;
 
     function drawMaskOverlay(ctx, cx, cy, maskKey, tick, isUnmasked, realNameLabel) {
-      if (isUnmasked) {
-        // Draw friendly unmasked human silhouette + verified face label (when Mutual Reveal is ON)
-        ctx.fillStyle = '#fde68a';
-        ctx.beginPath();
-        ctx.arc(cx, cy - 10, 58, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.arc(cx - 20, cy - 22, 6, 0, Math.PI * 2);
-        ctx.arc(cx + 20, cy - 22, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(cx, cy - 5, 22, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
-
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
-        ctx.fillRect(cx - 105, cy + 62, 210, 26);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(`🔓 Mutual Consent: ${realNameLabel}`, cx, cy + 79);
-        return;
-      }
-
-      const meta = MASK_META[maskKey] || MASK_META.fox;
+      // STRICT 100% COCKROACH JANTA PARTY MASK POLICY:
+      // Every user's face is completely hidden behind an animated 3D Cockroach Mask with moving antennae!
+      const meta = MASK_META[maskKey] || MASK_META.roach;
       const bob = Math.sin(tick * 0.06) * 5;
+      const antSway = Math.sin(tick * 0.1) * 12;
 
       if (maskKey === 'pixel') {
-        // Deep Pixel Blur Matrix over face region
+        // Roach Pixel Blur Shield + Giant Cockroach Crest
         const size = 16;
-        for (let x = cx - 64; x < cx + 64; x += size) {
-          for (let y = cy - 74 + bob; y < cy + 54 + bob; y += size) {
-            const hue = 250 + ((x * y + Math.floor(tick * 2)) % 60);
-            ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.92)`;
+        for (let x = cx - 68; x < cx + 68; x += size) {
+          for (let y = cy - 74 + bob; y < cy + 58 + bob; y += size) {
+            const hue = 25 + ((x * y + Math.floor(tick * 2)) % 45);
+            ctx.fillStyle = `hsla(${hue}, 85%, 45%, 0.95)`;
             ctx.fillRect(x, y, size - 2, size - 2);
           }
         }
-      } else {
-        // Glowing 3D-style AR Mask Shield
-        const grad = ctx.createRadialGradient(cx, cy + bob, 10, cx, cy + bob, 76);
-        grad.addColorStop(0, meta.accent);
-        grad.addColorStop(1, meta.color);
-
-        ctx.save();
-        ctx.shadowColor = meta.accent;
-        ctx.shadowBlur = 24;
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx, cy - 6 + bob, 66, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // Glowing AR wireframe rings
-        ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(cx, cy - 6 + bob, 72, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Emoji Crest
-        ctx.font = '56px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(meta.emoji, cx, cy - 6 + bob);
       }
 
-      // Audio visualizer bars around mouth
-      ctx.fillStyle = '#38bdf8';
+      // Draw Animated 3D Cockroach Antennae above the mask shield
+      ctx.save();
+      ctx.strokeStyle = meta.accent;
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      // Left Antenna
+      ctx.beginPath();
+      ctx.moveTo(cx - 28, cy - 58 + bob);
+      ctx.quadraticCurveTo(cx - 65, cy - 115 + bob, cx - 85 + antSway, cy - 125 + bob);
+      ctx.stroke();
+      // Right Antenna
+      ctx.beginPath();
+      ctx.moveTo(cx + 28, cy - 58 + bob);
+      ctx.quadraticCurveTo(cx + 65, cy - 115 + bob, cx + 85 - antSway, cy - 125 + bob);
+      ctx.stroke();
+      ctx.restore();
+
+      // Glowing 3D Cockroach Face Shield (Covers 100% of the human face)
+      const grad = ctx.createRadialGradient(cx, cy + bob, 10, cx, cy + bob, 78);
+      grad.addColorStop(0, meta.accent);
+      grad.addColorStop(1, meta.color);
+
+      ctx.save();
+      ctx.shadowColor = meta.accent;
+      ctx.shadowBlur = 28;
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy - 4 + bob, 70, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Outer Armored Ring
+      ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy - 4 + bob, 75, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Giant Cockroach Mask Icon (🪳) in center
+      ctx.font = '58px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🪳', cx, cy - 2 + bob);
+
+      // Crown / Swag Badge on forehead of the Cockroach Mask
+      if (meta.crown) {
+        ctx.font = 'bold 20px Inter, sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(meta.crown, cx, cy - 52 + bob);
+      }
+
+      // CJP Tag Pill at bottom of mask
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.fillRect(cx - 58, cy + 46 + bob, 116, 20);
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 10px Inter, sans-serif';
+      ctx.fillText('🪳 CJP MASK ON', cx, cy + 56 + bob);
+
+      // Audio visualizer bars below mask
+      ctx.fillStyle = '#f97316';
       for (let i = -4; i <= 4; i++) {
-        const barH = 6 + Math.abs(Math.sin(tick * 0.15 + i)) * 16;
-        ctx.fillRect(cx + i * 10 - 3, cy + 72 - barH / 2, 6, barH);
+        const barH = 5 + Math.abs(Math.sin(tick * 0.15 + i)) * 14;
+        ctx.fillRect(cx + i * 10 - 3, cy + 80 - barH / 2, 6, barH);
       }
     }
 
@@ -1069,7 +1238,7 @@
         state.myMask,
         tickAngle + 25,
         state.mutualRevealActive,
-        '@ShadowFox_99 (You)'
+        '@RoachBoss_CJP (You)'
       );
 
       animFrameId = requestAnimationFrame(renderVideoCanvases);
@@ -1127,8 +1296,8 @@
                 <div class="text-[11px] font-semibold text-amber-300 mb-1">👤 आरोपी का असली चेहरा (Admin KYC Unmasked):</div>
                 <div class="rounded-lg bg-slate-950 border border-amber-500/30 p-3 flex items-center gap-3">
                   <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/30 to-rose-500/30 border border-amber-400 flex flex-col items-center justify-center shrink-0">
-                    <span class="text-xl">🧑🏽</span>
-                    <span class="text-[9px] text-amber-200 font-bold">REAL FACE</span>
+                    <span class="text-xl">🎭</span>
+                    <span class="text-[9px] text-amber-200 font-bold">KYC ID</span>
                   </div>
                   <div class="text-xs space-y-0.5">
                     <div class="font-bold text-white">${accused.realName}</div>
@@ -1163,7 +1332,7 @@
           <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-lg">
-                ${u.kycUnlocked ? '🧑🏽' : mask.emoji}
+                ${mask.emoji}
               </div>
               <div>
                 <div class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -1233,19 +1402,80 @@
         }).join('');
       }
 
+      // Render Instagram/Facebook Masked Stories Bar
+      let activeStoryObj = null;
+      function renderStoriesBar() {
+        const bar = document.getElementById('maskedStoriesBar');
+        if (!bar) return;
+        bar.innerHTML = MASKED_STORIES.map((st) => {
+          const m = MASK_META[st.mask] || MASK_META.fox;
+          return `
+            <button type="button" data-story-id="${st.id}" class="open-story-btn flex flex-col items-center gap-1.5 shrink-0 group">
+              <div class="story-ring transition-transform group-hover:scale-105">
+                <div class="w-14 h-14 rounded-full bg-slate-950 flex items-center justify-center text-2xl border-2 border-slate-900">
+                  ${m.emoji}
+                </div>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-200 max-w-[76px] truncate">${st.handle}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30">${st.title}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
       // Initial Render
+      renderStoriesBar();
       renderFeed();
       renderFriendsAndChat();
       renderAdminPanel();
       renderFriendRequests();
       renderVideoCanvases();
-      startCloudListeners();
 
-      // Auto-set Personal Invite Link to live Netlify domain
-      const inviteInputEl = document.getElementById('myInviteLinkInput');
-      if (inviteInputEl && window.location.hostname && !window.location.hostname.includes('localhost')) {
-        inviteInputEl.value = window.location.origin + '/?invite=ShadowFox_99';
-      }
+      // Story Bar Click -> Open Fullscreen Masked Story Modal
+      const storyModal = document.getElementById('storyViewerModal');
+      document.getElementById('maskedStoriesBar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.open-story-btn');
+        if (!btn) return;
+        const stId = btn.getAttribute('data-story-id');
+        const st = MASKED_STORIES.find((s) => s.id === stId);
+        if (!st) return;
+        activeStoryObj = st;
+        const m = MASK_META[st.mask] || MASK_META.fox;
+        document.getElementById('storyModalEmoji').textContent = m.emoji;
+        document.getElementById('storyModalHandle').textContent = st.handle + ' • ' + st.title;
+        document.getElementById('storyModalBigArt').textContent = st.art;
+        document.getElementById('storyModalText').textContent = st.text;
+        storyModal.classList.remove('hidden');
+      });
+
+      document.getElementById('closeStoryModalBtn').addEventListener('click', () => {
+        storyModal.classList.add('hidden');
+      });
+      document.getElementById('storySendHeartBtn').addEventListener('click', () => {
+        storyModal.classList.add('hidden');
+        if (activeStoryObj) {
+          showToast(`आपने ${activeStoryObj.handle} की मास्क्ड स्टोरी को ❤️ लाइक भेजा!`, '❤️');
+        }
+      });
+      document.getElementById('storyConnectBtn').addEventListener('click', () => {
+        storyModal.classList.add('hidden');
+        if (activeStoryObj && state.users[activeStoryObj.userId]) {
+          state.activeFriendId = activeStoryObj.userId;
+          switchTab('friends');
+          showToast(`${activeStoryObj.handle} के साथ मास्क्ड चैट खुल गई!`, '💬');
+        }
+      });
+
+      // Shuffle Feed Colors Button
+      const themeKeys = Object.keys(VISUAL_THEMES);
+      document.getElementById('shuffleFeedColorsBtn').addEventListener('click', () => {
+        state.posts.forEach((p, i) => {
+          p.visualTheme = themeKeys[(i + Math.floor(Math.random() * themeKeys.length)) % themeKeys.length];
+        });
+        renderFeed();
+        showToast('फीड के सभी पोस्ट का रंग और इंस्टाग्राम/फेसबुक थीम अपडेट हो गया! 🎨', '✨');
+      });
+
       // Copy Personal Invite Link
       document.getElementById('copyInviteLinkBtn').addEventListener('click', () => {
         const linkInput = document.getElementById('myInviteLinkInput');
@@ -1313,7 +1543,7 @@
               relationNote: reqObj.note
             };
             state.chats[reqObj.userId] = [
-              { sender: 'them', text: `हाय @ShadowFox_99! मेरी फ्रेंड रिक्वेस्ट स्वीकार करने के लिए धन्यवाद 💙`, time: 'अभी' }
+              { sender: 'them', text: `हाय @RoachBoss_CJP! मेरी फ्रेंड रिक्वेस्ट स्वीकार करने के लिए धन्यवाद 💙`, time: 'अभी' }
             ];
             // Also add to Video Call Partner dropdown
             const sel = document.getElementById('callPartnerSelect');
@@ -1384,20 +1614,22 @@
           showToast('कृपया पोस्ट करने के लिए अपने मन की बात लिखें।', '⚠️');
           return;
         }
-        const newPostObj = {
+        const vThemeEl = document.getElementById('postVisualThemeSelect');
+        const chosenTheme = vThemeEl ? vThemeEl.value : 'insta_sunset';
+        state.posts.unshift({
           id: 'p_' + Date.now(),
           userId: 'me',
-          handle: '@ShadowFox_99',
+          handle: '@RoachBoss_CJP',
           mask: state.myMask,
           mood,
-          timeAgo: 'अभी-अभी',
+          visualTheme: chosenTheme,
+          captionTitle: text.slice(0, 48) + (text.length > 48 ? '...' : ''),
+          timeAgo: 'अभी-अभी • 100% Masked',
           content: text,
           reactions: { hug: 1, support: 1, listen: 0 },
           userReacted: {},
           comments: []
-        };
-        state.posts.unshift(newPostObj);
-        syncPostToCloud(newPostObj);
+        });
         input.value = '';
         state.moodFilter = 'ALL';
         renderFeed();
@@ -1433,7 +1665,7 @@
             const post = state.posts.find((p) => p.id === postId);
             const myEmoji = MASK_META[state.myMask].emoji;
             post.comments.push({
-              author: '@ShadowFox_99',
+              author: '@RoachBoss_CJP',
               mask: myEmoji,
               text: inputEl.value.trim()
             });
@@ -1580,17 +1812,11 @@
         showToast(state.voiceModulatorOn ? 'वॉइस पिच चेंजर चालू हो गया!' : 'सामान्य आवाज़ मोड चालू।', '🎙️');
       });
 
-      // Mutual Face Reveal Toggle
+      // Permanent 100% Face-Hide Lock Button
       document.getElementById('mutualRevealBtn').addEventListener('click', () => {
-        state.mutualRevealActive = !state.mutualRevealActive;
-        const partner = state.users[state.activeCallPartnerId];
-        if (state.mutualRevealActive) {
-          document.getElementById('remoteMaskStatusText').textContent = '🔓 Mutual Consent: दोनों की सहमति से फेस अनलॉक है';
-          showToast(`दोनों दोस्तों (${partner.handle} और आप) की सहमति से म्युचुअल फेस रिवील ऑन किया गया!`, '🤝');
-        } else {
-          document.getElementById('remoteMaskStatusText').textContent = '🎭 3D Mask Active (असली चेहरा छुपा है)';
-          showToast('फेस मास्क वापस लगा दिया गया है! आपका चेहरा फिर से हाइड है।', '🎭');
-        }
+        state.mutualRevealActive = false;
+        document.getElementById('remoteMaskStatusText').textContent = '🔒 100% Face-Lock Active (चेहरा कभी नहीं दिखेगा)';
+        showToast('सुरक्षा नियम: इस ऐप में किसी का भी चेहरा कभी नहीं दिखाया जाता! 100% परमानेंट फेस-हाइड लॉक चालू है।', '🛡️');
       });
 
       // Simulate Misbehavior Button
@@ -1621,23 +1847,21 @@
         const newReportId = 'REP-' + Math.floor(1000 + Math.random() * 9000);
         accused.kycUnlocked = true; // Automatically unlock KYC for Admin upon report
 
-        const newRepObj = {
+        state.abuseReports.unshift({
           id: newReportId,
           accusedId: accused.id,
-          reporterHandle: '@ShadowFox_99 (You)',
+          reporterHandle: '@RoachBoss_CJP (You)',
           reason,
           notes,
           bufferDuration: `60 सेकंड (RAM Buffer 00:00 - 00:${String(state.rollingBufferSeconds).padStart(2, '0')})`,
           timestamp: 'अभी-अभी',
           status: 'pending_review',
           autoDeleteDays: 30
-        };
-        state.abuseReports.unshift(newRepObj);
-        syncReportToCloud(newRepObj);
+        });
 
         state.auditLogs.unshift({
           time: 'अभी',
-          text: `Report #${newReportId}: @ShadowFox_99 ने ${accused.handle} की शिकायत की। अंतिम 60 सेकंड की रिकॉर्डिंग और आरोपी का असली चेहरा (${accused.realName}) एडमिन पैनल में अनलॉक किया गया।`
+          text: `Report #${newReportId}: @RoachBoss_CJP ने ${accused.handle} की शिकायत की। अंतिम 60 सेकंड की रिकॉर्डिंग और आरोपी का असली चेहरा (${accused.realName}) एडमिन पैनल में अनलॉक किया गया।`
         });
 
         document.getElementById('reportNotesInput').value = '';

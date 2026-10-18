@@ -1,9 +1,9 @@
 {
-  "name": "VeilChat — Face-Hidden Social & Video Call App",
-  "short_name": "VeilChat",
+  "name": "Cockroach Chat (कॉकरोच चैट) — 100% Face-Hidden Social & Video Call App",
+  "short_name": "CockroachChat",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0b0f19",
-  "theme_color": "#4f46e5",
-  "description": "100% Face-Hidden Emotional Venting, Anonymous Friends & Masked Personal Video Call App"
+  "theme_color": "#ec4899",
+  "description": "Cockroach Chat: 100% Face-Hidden Instagram & Facebook Style Social Media & Masked Personal Video Call App"
 }
