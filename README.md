@@ -1,34 +1,28 @@
-# VeilChat (वेलचैट) — फेस-हाइड सोशल मीडिया और पर्सनल वीडियो कॉल ऐप
+# Lowest Bet Bike Race — Unity 3D starter source
 
-यह ज़िप पैकेज आपके **Face-Hidden Social Media & Personal Video Calling App** का पूरा प्रोटोटाइप और फुल-स्टैक कोडबेस है।
+This is a source-code starter for a 3-rider mountain-bike race inspired by the supplied screenshot. It is not the original game's source code and is not a ready-made APK. The project uses Unity C# scripts and simple waypoint racing so you can create your own scene.
 
-## 📦 इस ज़िप फोल्डर में क्या-क्या है?
+## Rules implemented
+- Three cyclists race along a waypoint track.
+- Riders change lateral lane positions at irregular intervals, creating visible crossings/overtakes.
+- Each rider has a `virtualBet` amount.
+- The rider with the lowest virtual bet is the winner.
+- The lowest-bet rider gets a small boost near the final waypoints so the ending visually supports the rule.
+- When all riders finish, the game enters slow motion and then reveals the lowest-bet winner.
+- This starter only uses virtual coins. No real-money betting or payment integration is included.
 
-1. **`frontend/index.html` (सिंगल-फाइल वर्किंग वेब ऐप प्रोटोटाइप)**:
-   - इसे आप किसी भी ब्राउज़र (मोबाइल या लैपटॉप) में सीधे डबल-क्लिक करके चला सकते हैं।
-   - **इमोशनल वेंटिंग फीड (Emotional Feed)**: बिना चेहरा दिखाए अपने मन की बात पोस्ट करें ("बुरा लग रहा है", "अकेलापन", "सपोर्ट चाहिए"), रिएक्ट करें (`🫂 गले लगाएं`, `💙 साथ हैं`, `👂 सुनें`), कमेंट करें और एक क्लिक में **दोस्त बनाएं (Connect & Chat)**।
-   - **1-on-1 पर्सनल चैट और वीडियो कॉल**: दोस्तों के साथ प्राइवेट चैट और पर्सनल मास्क्ड वीडियो कॉल।
-   - **रियल-टाइम फेस हाइड (Live Webcam + AR Mask Overlay)**: असली वेबकैम (या सिम्युलेटेड कैमरा) पर रियल-टाइम 3D मास्क (Cyber Fox, Neon Owl, Zen Lotus, Heavy Pixel Blur) लगता है ताकि असली चेहरा कभी न दिखे।
-   - **म्युचुअल फेस रिवील (Mutual Unmask)**: पर्सनल कॉल में जब दोनों दोस्त सहमत हों, तभी चेहरा दिखेगा।
-   - **60-सेकंड रोलिंग बफर और 'Report Abuse' सिस्टम**: कॉल के दौरान पिछले 60 सेकंड का डेटा RAM बफर में रहता है। सामान्य कॉल कटने पर डेटा डिलीट हो जाता है, लेकिन **Report Abuse** दबाने पर वही 60 सेकंड की क्लिप और आरोपी की KYC प्रोफाइल **Admin Panel** में सबूत के रूप में पहुंच जाती है।
-   - **एडमिन पैनल (Admin Moderation & KYC Vault)**: एडमिन सामान्य यूज़र्स के चेहरे नहीं देख सकता, लेकिन जिस यूज़र के खिलाफ रिपोर्ट आती है, उसका 60-सेकंड का वीडियो सबूत और साइनअप KYC चेहरा अनलॉक करके उसे बैन कर सकता है।
+## Unity setup
+1. Install Unity Hub and a current Unity 3D project template. Create a 3D project.
+2. Copy `Assets/Scripts` from this package into your Unity project's `Assets/Scripts` folder.
+3. Create a track with a wide dirt-road surface. Add empty GameObjects along the center of the track in order: `WP_00`, `WP_01`, `WP_02`, ... `WP_FINISH`. Place them on the bends and keep them above the road surface.
+4. Create 3 cyclist objects (models or temporary capsules). Orient each model so its forward direction is Unity's blue Z axis. Add `CyclistRacer` to each.
+5. On each cyclist, assign the same ordered waypoint transforms to `waypoints`. Set different `riderName`, `virtualBet` and `riderColor` values. Example bets: Rider A = 10, Rider B = 20, Rider C = 30.
+6. Create an empty GameObject named `RaceManager` and add `RaceManager.cs`. Add all three cyclists to its `riders` list.
+7. Optional UI: create a Canvas with legacy UI Text fields for status/result/bets. Assign `statusText` and `resultText` on RaceManager. Add `RaceHUD` to a UI object, assign the manager and bets Text, then connect UI Button OnClick to `RaceHUD.StartRaceButton` and `RaceHUD.ResetRaceButton`.
+8. Press Play and call `StartRace()` (or use the UI button).
 
-2. **`backend/server.js` और `backend/package.json`**:
-   - Node.js, Express और Socket.io पर बना रियल-टाइम सिग्नलिंग और मॉडरेशन सर्वर।
-   - WebRTC वीडियो कॉल हैंडशेक, म्युचुअल फेस रिवील सिग्नल और 60-सेकंड क्लिप अपलोड API।
-
-3. **`backend/schema.sql`**:
-   - PostgreSQL डेटाबेस स्कीमा (Users, Encrypted KYC Vault, Posts, Friendships, Call Abuse Reports, Admin Audit Logs)।
-
-## 🚀 इसे कैसे चलाएं (How to Run)
-
-### 1. तुरंत डेमो चलाने के लिए (Zero Setup)
-- `frontend/index.html` फाइल पर डबल-क्लिक करें और किसी भी ब्राउज़र (Chrome/Edge/Safari) में खोलें।
-
-### 2. बैकएंड सर्वर चलाने के लिए (Node.js)
-```bash
-cd backend
-npm install
-npm start
-```
-सर्वर `http://localhost:4000` पर शुरू हो जाएगा।
+## Important tuning notes
+- The lane-crossing effect is most visible on a broad track. Increase `laneWidth` carefully so riders do not leave the road.
+- `finishDistance` should be large enough for the riders to reach each waypoint. For long tracks, use more waypoints around bends.
+- This simple prototype moves rider objects using transforms. Add colliders, a proper bike controller, animations, sound, camera follow, mobile touch controls and polished models for a production-quality game.
+- For Unity UI Text, use `UnityEngine.UI.Text`. If using TextMeshPro, change the script field types to `TMP_Text` and add `using TMPro;`.
